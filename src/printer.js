@@ -863,7 +863,7 @@ function genericPrintNoParens(path, options, print) {
         adjustClause(path.call(print, "body"), options)
       ]);
     case "IfStatement":
-      const con = adjustClause(path.call(print, "consequent"), options);
+      const con = concat([" ", path.call(print, "consequent")]);
 
       parts = [
         "if (",
