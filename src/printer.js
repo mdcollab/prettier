@@ -288,6 +288,7 @@ function genericPrintNoParens(path, options, print) {
       // as the arrow.
       if (
         n.body.type === "ArrayExpression" ||
+          n.body.type === "ArrowFunctionExpression" ||
           n.body.type === "ObjectExpression" ||
           n.body.type === "JSXElement" ||
           n.body.type === "BlockStatement"
