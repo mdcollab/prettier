@@ -793,15 +793,15 @@ function genericPrintNoParens(path, options, print) {
       return group(
         concat([
           path.call(print, "test"),
+          "?",
           indent(
             options.tabWidth,
             concat([
               line,
-              "? ",
-              indent(2, path.call(print, "consequent")),
+              path.call(print, "consequent"),
+              ":",
               line,
-              ": ",
-              indent(2, path.call(print, "alternate"))
+              path.call(print, "alternate")
             ])
           )
         ])
