@@ -2204,7 +2204,7 @@ function printMemberChain(path, options, print) {
   if (
     groups[0].length === 1 &&
       groups[0][0].node.type === "Identifier" &&
-      groups[0][0].node.name.match(/(^[A-Z])|^[_$]+$/) &&
+      (groups[0][0].node.name.match(/(^[A-Z])|^[_$]+$/) || groups[0][0].node.name === "api") &&
       groups.length >= 2
   ) {
     // Push all the values of groups[0] at the beginning of groups[1]
