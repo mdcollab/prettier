@@ -1,4 +1,6 @@
-exports[`test delegate_yield.js 1`] = `
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`delegate_yield.js 1`] = `
 "async function *delegate_next() {
   async function *inner() {
     var x: void = yield; // error: number ~> void
@@ -40,11 +42,11 @@ async function* delegate_yield() {
   }
   yield* inner();
 }
-(async () => {
+async () => {
   for await (const x of delegate_yield()) {
     (x: void); // error: number ~> void
   }
-});
+};
 
 async function* delegate_return() {
   async function* inner() {
@@ -55,7 +57,64 @@ async function* delegate_return() {
 "
 `;
 
-exports[`test generator.js 1`] = `
+exports[`delegate_yield.js 2`] = `
+"async function *delegate_next() {
+  async function *inner() {
+    var x: void = yield; // error: number ~> void
+  }
+  yield *inner();
+}
+delegate_next().next(0);
+
+async function *delegate_yield() {
+  async function *inner() {
+    yield 0;
+  }
+  yield *inner();
+}
+(async () => {
+  for await (const x of delegate_yield()) {
+    (x: void); // error: number ~> void
+  }
+});
+
+async function *delegate_return() {
+  async function *inner() {
+    return 0;
+  }
+  var x: void = yield *inner(); // error: number ~> void
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+async function* delegate_next() {
+  async function* inner() {
+    var x: void = yield; // error: number ~> void
+  }
+  yield* inner();
+}
+delegate_next().next(0);
+
+async function* delegate_yield() {
+  async function* inner() {
+    yield 0;
+  }
+  yield* inner();
+}
+async () => {
+  for await (const x of delegate_yield()) {
+    (x: void); // error: number ~> void
+  }
+};
+
+async function* delegate_return() {
+  async function* inner() {
+    return 0;
+  }
+  var x: void = yield* inner(); // error: number ~> void
+}
+"
+`;
+
+exports[`generator.js 1`] = `
 "declare interface File {
   readLine(): Promise<string>;
   close(): void;
@@ -77,12 +136,12 @@ async function* readLines(path) {
 }
 
 async function f() {
-  for await (const line of readLines(\"/path/to/file\")) {
+  for await (const line of readLines(\\"/path/to/file\\")) {
     (line: void); // error: string ~> void
   }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-interface File {
+declare interface File {
   readLine(): Promise<string>,
   close(): void,
   EOF: boolean
@@ -103,23 +162,78 @@ async function* readLines(path) {
 }
 
 async function f() {
-  for await (const line of readLines(\"/path/to/file\")) {
+  for await (const line of readLines(\\"/path/to/file\\")) {
     (line: void); // error: string ~> void
   }
 }
 "
 `;
 
-exports[`test return.js 1`] = `
+exports[`generator.js 2`] = `
+"declare interface File {
+  readLine(): Promise<string>;
+  close(): void;
+  EOF: boolean;
+}
+
+declare function fileOpen(path: string): Promise<File>;
+
+async function* readLines(path) {
+  let file: File = await fileOpen(path);
+
+  try {
+    while (!file.EOF) {
+      yield await file.readLine();
+    }
+  } finally {
+    file.close();
+  }
+}
+
+async function f() {
+  for await (const line of readLines(\\"/path/to/file\\")) {
+    (line: void); // error: string ~> void
+  }
+}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+declare interface File {
+  readLine(): Promise<string>,
+  close(): void,
+  EOF: boolean
+}
+
+declare function fileOpen(path: string): Promise<File>;
+
+async function* readLines(path) {
+  let file: File = await fileOpen(path);
+
+  try {
+    while (!file.EOF) {
+      yield await file.readLine();
+    }
+  } finally {
+    file.close();
+  }
+}
+
+async function f() {
+  for await (const line of readLines(\\"/path/to/file\\")) {
+    (line: void); // error: string ~> void
+  }
+}
+"
+`;
+
+exports[`return.js 1`] = `
 "declare var gen: AsyncGenerator<void,string,void>;
 
-// You can pass whatever you like to return, it doesn\'t need to be related to
-// the AsyncGenerator\'s return type
+// You can pass whatever you like to return, it doesn't need to be related to
+// the AsyncGenerator's return type
 gen.return(0).then(result => {
   (result.value: void); // error: string | number ~> void
 });
 
-// However, a generator can \"refuse\" the return by catching an exception and
+// However, a generator can \\"refuse\\" the return by catching an exception and
 // yielding or returning internally.
 async function *refuse_return() {
   try {
@@ -128,7 +242,7 @@ async function *refuse_return() {
     return 0;
   }
 }
-refuse_return().return(\"string\").then(result => {
+refuse_return().return(\\"string\\").then(result => {
   if (result.done) {
     (result.value: string); // error: number | void ~> string
   }
@@ -136,13 +250,13 @@ refuse_return().return(\"string\").then(result => {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 declare var gen: AsyncGenerator<void, string, void>;
 
-// You can pass whatever you like to return, it doesn\'t need to be related to
-// the AsyncGenerator\'s return type
+// You can pass whatever you like to return, it doesn't need to be related to
+// the AsyncGenerator's return type
 gen.return(0).then(result => {
   (result.value: void); // error: string | number ~> void
 });
 
-// However, a generator can \"refuse\" the return by catching an exception and
+// However, a generator can \\"refuse\\" the return by catching an exception and
 // yielding or returning internally.
 async function* refuse_return() {
   try {
@@ -151,7 +265,7 @@ async function* refuse_return() {
     return 0;
   }
 }
-refuse_return().return(\"string\").then(result => {
+refuse_return().return(\\"string\\").then(result => {
   if (result.done) {
     (result.value: string); // error: number | void ~> string
   }
@@ -159,7 +273,56 @@ refuse_return().return(\"string\").then(result => {
 "
 `;
 
-exports[`test throw.js 1`] = `
+exports[`return.js 2`] = `
+"declare var gen: AsyncGenerator<void,string,void>;
+
+// You can pass whatever you like to return, it doesn't need to be related to
+// the AsyncGenerator's return type
+gen.return(0).then(result => {
+  (result.value: void); // error: string | number ~> void
+});
+
+// However, a generator can \\"refuse\\" the return by catching an exception and
+// yielding or returning internally.
+async function *refuse_return() {
+  try {
+    yield 1;
+  } finally {
+    return 0;
+  }
+}
+refuse_return().return(\\"string\\").then(result => {
+  if (result.done) {
+    (result.value: string); // error: number | void ~> string
+  }
+});
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+declare var gen: AsyncGenerator<void, string, void>;
+
+// You can pass whatever you like to return, it doesn't need to be related to
+// the AsyncGenerator's return type
+gen.return(0).then(result => {
+  (result.value: void); // error: string | number ~> void
+});
+
+// However, a generator can \\"refuse\\" the return by catching an exception and
+// yielding or returning internally.
+async function* refuse_return() {
+  try {
+    yield 1;
+  } finally {
+    return 0;
+  }
+}
+refuse_return().return(\\"string\\").then(result => {
+  if (result.done) {
+    (result.value: string); // error: number | void ~> string
+  }
+});
+"
+`;
+
+exports[`throw.js 1`] = `
 "async function *catch_return() {
   try {
     yield 0;
@@ -169,7 +332,7 @@ exports[`test throw.js 1`] = `
 }
 
 (async () => {
-  catch_return().throw(\"\").then(({value}) => {
+  catch_return().throw(\\"\\").then(({value}) => {
     if (value !== undefined) {
       (value: void); // error: number ~> void
     }
@@ -186,7 +349,7 @@ async function *yield_return() {
 }
 
 (async () => {
-  yield_return().throw(\"\").then(({value}) => {
+  yield_return().throw(\\"\\").then(({value}) => {
     if (value !== undefined) {
       (value: void); // error: number ~> void
     }
@@ -201,13 +364,13 @@ async function* catch_return() {
   }
 }
 
-(async () => {
-  catch_return().throw(\"\").then(({ value }) => {
+async () => {
+  catch_return().throw(\\"\\").then(({ value }) => {
     if (value !== undefined) {
       (value: void); // error: number ~> void
     }
   });
-});
+};
 
 async function* yield_return() {
   try {
@@ -218,12 +381,81 @@ async function* yield_return() {
   }
 }
 
+async () => {
+  yield_return().throw(\\"\\").then(({ value }) => {
+    if (value !== undefined) {
+      (value: void); // error: number ~> void
+    }
+  });
+};
+"
+`;
+
+exports[`throw.js 2`] = `
+"async function *catch_return() {
+  try {
+    yield 0;
+  } catch (e) {
+    return e;
+  }
+}
+
 (async () => {
-  yield_return().throw(\"\").then(({ value }) => {
+  catch_return().throw(\\"\\").then(({value}) => {
     if (value !== undefined) {
       (value: void); // error: number ~> void
     }
   });
 });
+
+async function *yield_return() {
+  try {
+    yield 0;
+    return;
+  } catch (e) {
+    yield e;
+  }
+}
+
+(async () => {
+  yield_return().throw(\\"\\").then(({value}) => {
+    if (value !== undefined) {
+      (value: void); // error: number ~> void
+    }
+  });
+});
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+async function* catch_return() {
+  try {
+    yield 0;
+  } catch (e) {
+    return e;
+  }
+}
+
+async () => {
+  catch_return().throw(\\"\\").then(({ value }) => {
+    if (value !== undefined) {
+      (value: void); // error: number ~> void
+    }
+  });
+};
+
+async function* yield_return() {
+  try {
+    yield 0;
+    return;
+  } catch (e) {
+    yield e;
+  }
+}
+
+async () => {
+  yield_return().throw(\\"\\").then(({ value }) => {
+    if (value !== undefined) {
+      (value: void); // error: number ~> void
+    }
+  });
+};
 "
 `;

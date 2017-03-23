@@ -47,3 +47,28 @@ nest_plz =
     <div></div>
     </div>
   </div>
+
+regression_not_transformed_1 =
+  <span> <Icon icon="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" /></span>;
+
+regression_not_transformed_2 =
+  <span><Icon icon="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" /> </span>;
+
+similar_1 =
+  <span> <Icon icon="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" /></span>;
+
+similar_2 =
+  <span><Icon icon="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" /> </span>;
+
+similar_3 =
+  <span><Icon icon="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" /> <Icon icon="" /></span>;
+
+not_broken_end =
+  <div>
+    long text long text long text long text long text long text long text long text <link>url</link> long text long text
+  </div>
+
+not_broken_begin =
+  <div>
+    <br /> long text long text long text long text long text long text long text long text<link>url</link> long text long text
+  </div>

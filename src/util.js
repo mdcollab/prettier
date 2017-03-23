@@ -1,6 +1,5 @@
 "use strict";
 
-var assert = require("assert");
 var types = require("ast-types");
 var n = types.namedTypes;
 
@@ -35,8 +34,8 @@ function fixFaultyLocations(node, text) {
       });
     }
   } else if (
-    n.MethodDefinition && n.MethodDefinition.check(node) ||
-      n.Property.check(node) && (node.method || node.shorthand)
+    (n.MethodDefinition && n.MethodDefinition.check(node)) ||
+    (n.Property.check(node) && (node.method || node.shorthand))
   ) {
     if (n.FunctionExpression.check(node.value)) {
       // FunctionExpression method values should be anonymous,
@@ -76,6 +75,13 @@ function getParentExportDeclaration(path) {
     return parentNode;
   }
 
+  return null;
+}
+
+function getPenultimate(arr) {
+  if (arr.length > 1) {
+    return arr[arr.length - 2];
+  }
   return null;
 }
 
@@ -124,7 +130,7 @@ function skip(chars) {
 
 const skipWhitespace = skip(/\s/);
 const skipSpaces = skip(" \t");
-const skipToLineEnd = skip("; \t");
+const skipToLineEnd = skip(",; \t");
 const skipEverythingButNewLine = skip(/[^\r\n]/);
 
 function skipInlineComment(text, index) {
@@ -193,6 +199,16 @@ function hasNewlineInRange(text, start, end) {
     }
   }
   return false;
+}
+
+// Note: this function doesn't ignore leading comments unlike isNextLineEmpty
+function isPreviousLineEmpty(text, node) {
+  let idx = locStart(node) - 1;
+  idx = skipSpaces(text, idx, { backwards: true });
+  idx = skipNewline(text, idx, { backwards: true });
+  idx = skipSpaces(text, idx, { backwards: true });
+  const idx2 = skipNewline(text, idx, { backwards: true });
+  return idx !== idx2;
 }
 
 function isNextLineEmpty(text, node) {
@@ -277,7 +293,8 @@ var PRECEDENCE = {};
   ["<", ">", "<=", ">=", "in", "instanceof"],
   [">>", "<<", ">>>"],
   ["+", "-"],
-  ["*", "/", "%", "**"]
+  ["*", "/", "%"],
+  ["**"]
 ].forEach(function(tier, i) {
   tier.forEach(function(op) {
     PRECEDENCE[op] = i;
@@ -294,11 +311,13 @@ module.exports = {
   fixFaultyLocations,
   isExportDeclaration,
   getParentExportDeclaration,
+  getPenultimate,
   getLast,
   skipWhitespace,
   skipSpaces,
   skipNewline,
   isNextLineEmpty,
+  isPreviousLineEmpty,
   hasNewline,
   hasNewlineInRange,
   hasSpaces,

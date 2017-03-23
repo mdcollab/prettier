@@ -1,4 +1,6 @@
-exports[`test bracket.js 1`] = `
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`bracket.js 1`] = `
 "export {
   runTaskForChanged,
   description,
@@ -25,7 +27,7 @@ export { fitsIn, oneLine };
 "
 `;
 
-exports[`test bracket.js 2`] = `
+exports[`bracket.js 2`] = `
 "export {
   runTaskForChanged,
   description,
@@ -52,20 +54,92 @@ export {fitsIn, oneLine};
 "
 `;
 
-exports[`test empty.js 1`] = `
-"export {};
-export {} from \".\";
+exports[`bracket.js 3`] = `
+"export {
+  runTaskForChanged,
+  description,
+  someOtherLabel,
+  thatMakes,
+  itGo,
+  multiLine,
+  andMore,
+  soWeCanGetItTo80Columns
+};
+export {fitsIn, oneLine};
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-export {};
-export {} from \".\";
+export {
+  runTaskForChanged,
+  description,
+  someOtherLabel,
+  thatMakes,
+  itGo,
+  multiLine,
+  andMore,
+  soWeCanGetItTo80Columns
+};
+export { fitsIn, oneLine };
 "
 `;
 
-exports[`test empty.js 2`] = `
+exports[`bracket.js 4`] = `
+"export {
+  runTaskForChanged,
+  description,
+  someOtherLabel,
+  thatMakes,
+  itGo,
+  multiLine,
+  andMore,
+  soWeCanGetItTo80Columns
+};
+export {fitsIn, oneLine};
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+export {
+  runTaskForChanged,
+  description,
+  someOtherLabel,
+  thatMakes,
+  itGo,
+  multiLine,
+  andMore,
+  soWeCanGetItTo80Columns
+};
+export {fitsIn, oneLine};
+"
+`;
+
+exports[`empty.js 1`] = `
 "export {};
-export {} from \".\";
+export {} from \\".\\";
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 export {};
-export {} from \".\";
+export {} from \\".\\";
+"
+`;
+
+exports[`empty.js 2`] = `
+"export {};
+export {} from \\".\\";
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+export {};
+export {} from \\".\\";
+"
+`;
+
+exports[`empty.js 3`] = `
+"export {};
+export {} from \\".\\";
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+export {};
+export {} from \\".\\";
+"
+`;
+
+exports[`empty.js 4`] = `
+"export {};
+export {} from \\".\\";
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+export {};
+export {} from \\".\\";
 "
 `;

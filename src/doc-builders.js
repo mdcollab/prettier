@@ -5,7 +5,7 @@ const willBreak = utils.willBreak;
 
 function assertDoc(val) {
   if (
-    !(typeof val === "string" || val != null && typeof val.type === "string")
+    !(typeof val === "string" || (val != null && typeof val.type === "string"))
   ) {
     throw new Error(
       "Value " + JSON.stringify(val) + " is not a valid document"
@@ -63,14 +63,11 @@ function ifBreak(breakContents, flatContents) {
 }
 
 function lineSuffix(contents) {
-  if (typeof contents !== "string") {
-    throw new Error(
-      "lineSuffix only takes a string, but given: " + JSON.stringify(contents)
-    );
-  }
+  assertDoc(contents);
   return { type: "line-suffix", contents };
 }
 
+const lineSuffixBoundary = { type: "line-suffix-boundary" };
 const breakParent = { type: "break-parent" };
 const line = { type: "line" };
 const softline = { type: "line", soft: true };
@@ -104,6 +101,7 @@ module.exports = {
   group,
   conditionalGroup,
   lineSuffix,
+  lineSuffixBoundary,
   breakParent,
   ifBreak,
   indent

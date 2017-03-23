@@ -1,3 +1,175 @@
+# 0.22.0
+
+[link](https://github.com/jlongster/prettier/compare/0.21.0...0.22.0)
+
+* Run 0.21.0 (#876)
+* Fix paren removal on UnionTypeAnnotation (#878)
+* Fix typo (#891)
+* Ensure no parens for JSX inside of an ArrayExpression (#895)
+* Fix object expression in arrow function expression (#897)
+* Fix unprinted comments in destructuring (#898)
+* Fix bug with importing empty type (#904)
+* Fix broken export comment (#899)
+* Add CLI Example to Readme (#909)
+* Fix 0.5e0 (#911)
+* Fix binary expression instanceof in arrow function expression (#913)
+* Improve readme CLI usage example (#910)
+* Do not break long it/test calls when template literal (#893)
+* Update lint-staged docs to use husky for less config. (#923)
+* Fix files with comments only (#813)
+* Update README.md (#928)
+* Fix binary op as body in arrow expression (#921)
+* cleanup needsParens (#935)
+* [JSX] Break if opening element breaks (#942)
+* Parenthesize function expressions in expression position (#941)
+* update the README to add a pre-commit hook (#944)
+* Fix #951: properly parenthesize ** expressions (#952)
+* [WIP] TypeScript Parser (#915)
+* Do not break long `describe` calls (#953)
+* Recursively find leading comments inside ReturnStatements (#955)
+* Fix `in` inside of a for in a nested way (#954)
+* Make comments around empty parenthesis be inside (#957)
+* Stabilize comment after object label (#958)
+* Inline BinaryExpressions inside JSXExpression (#965)
+* Only allow same-line arrow-less body for explicit nodes (#966)
+
+# 0.21.0
+
+[link](https://github.com/jlongster/prettier/compare/0.20.0...0.21.0)
+
+* [JSX] Break before and after jsx whitespace (#836)
+* re-run snapshot tests
+* Run prettier 0.20.0 (#835)
+* [JSX] Don't wrap JSX Elements in parentheses in {} (#845) 
+* Fix comment after the last argument of a function (#856)
+* Fix travis build imag
+* Do not break require calls (#841) 
+* Stabilize import as comments (#855)
+* Fix jsx expression comment that break (#852)
+* Inline last arg function arguments (#847)
+* Keep parenthesis on export default function (#844)
+* Inline short expressions for boolean operators too (#826)
+* Introduce -l option (#854)
+* Add parenthesis around assignments (#862)
+* Do not put \n after label (#860)
+* Fix comment for `call( // comment` (#858)
+* Do not break long it calls (#842)
+* Fix flow union comments (#853)
+
+# 0.20.0
+
+[link](https://github.com/jlongster/prettier/compare/0.19.0...0.20.0)
+
+* Fix extra parens for update expressions (#796)    
+* Fix empty options (#803)    
+* Eagerly evaluate `ifBreak` when processing template literals (fixes #795    
+* Fix function declaration params comments (#802)   
+* Update flow to 0.40 (#808)    
+* Correct link for travis   
+* Fix function call args (#809)   
+* Properly support `do` (#811)    
+* Do not put parenthesis around not named default export (#819)   
+* Adds another preset to related projects (#820)    
+* Fix trailing commas in docs (#825)    
+* Put short body of arrow functions on the same line (#829)   
+* Preserve new lines for comments after `=` (#830)    
+* Fix indentation of a merged group (#828)    
+* Migrate class comments to the beginning (#831)    
+* Update list of related projects (#833)    
+* Allow breaking for logical expressions in member chains (#827)
+
+# 0.19.0
+
+[link](https://github.com/jlongster/prettier/compare/0.18.0...0.19.0)
+
+* docs(README): use yarn add for consistency (#734)
+* Make trailing-comma option support 2 different modes (#641)
+* Update README with valid trailingComma options
+* Fix await ternary parenthesis (#740)
+* Fix missing dangling comment in exports (#741)
+* Fix missing dangling comments in arrays (#744)
+* Remove extra parenthesis around await inside of unary expression (#745)
+* Fix missing dangling comments in for loop (#742)
+* Add note about trailingComma option in versions 0.18.0 and below
+* Add missing explanatory comment in ForStatement case (#748)
+* Fix leading & operators in flow types (#738)
+* Fix missing comments in assignment pattern (#704)
+* Correctly place trailing comments in conditionals (#754)
+* Use double quotes in script wildcards to support windows `cmd.exe`. (#761)
+* Upgrade to Jest 19 (#762)
+* Upgrade to Jest 19.0.1 (#779)
+* Remove extra parens around ternary arguments of a new call (#776)
+* Do not attach comments to EmptyStatements in try/catch (#763)
+* Bump babylon & add test for async func decl (#790)
+* Add `this` for Member factory whitelist and remove softline (#782)
+* Do not expand empty catch (#783)
+* Group [0] at the end of the previous chain instead of beginning of next one (#784)
+* Do not format template literals (#749)
+* Revert babylon bump (#792)
+* Do not put trailing commas for function declaration in es5 mode (#791)
+* [WIP] Fix comments in template literals (#643)
+* Introduce line-suffix-boundary (#750)
+* [RFC] Add parenthesis around && inside of || (#780)
+* Fix tests on node 4
+
+# 0.18.0
+
+[link](https://github.com/jlongster/prettier/compare/0.17.0...0.18.0)
+
+* fix --debug-check
+* [JSX] Don't add newline following newline (#690)
+* [Docs] Use replaceState API when demo code changes (#710)
+* Do not inline new as last argument (#705)
+* Inline objects & arrays as right part of a boolean expression (#692)
+* [RFC] Remove parenthesis object special case (#689)
+* Ensure importKind is printed (#718)
+* [Docs]: update Readme to reference VS extension (#720)
+* docs: Add pre-commit hook with 🚫💩 lint-staged section to the README (#714)
+* [RFC] Preserve new lines between array elements (#707)
+* Do not put \n inside of empty object method bodies (#706)
+* Align boolean inside of arrow functions (#691)
+* Fix trailing new lines preservation (#724)
+* Unified Split
+
+# 0.17.1
+
+* Use `readline` api to manipulate `process.stdout` output. (#687)
+
+# 0.17.0
+
+[link](https://github.com/jlongster/prettier/compare/0.16.0...0.17.0)
+
+* [JSX] Fix spurious newline (fixes #614) (#628)
+* Add --debug-check cli option (#627)
+* Remove last trailing line for directives-only files (#609)
+* Expand vim instructions
+* Fix formatting in readme
+* Update snapshots
+* Preserve empty line before last comment (#594)
+* test on current release of node.js (#595)
+* [JSX] jsx-whitespace breaks with parent (fixes #622) (#626)
+* Log filename with [update] or [ignore] flags during `--write` process. (#584)
+* Do not indent binary expressions inside of if (#604)
+* Put short elements at right of single binary expression on same line (#605)
+* Run prettier 0.16.0 on the codebase (#631)
+* Preserve blank lines inside of objects (#606)
+* fix typo in JetBrains External Tool config readme (#679)
+* Fix dangling comments for arrays (#665)
+* Print line-suffix in --debug-print-doc (#676)
+* Avoid unneeded parenthesis for colon with comments (#673)
+* Stabilize comments inside of if/then/else before { (#672)
+* Soft break the first member of a chain (#667)
+* Stabilize comments inside of ternaries (#666)
+* Fix trailing commas with a trailing comment (#664)
+* Fix Flow union type annotations indentation (#650)
+* Ensure that all comments are printed (#571)
+* Properly support member chains comments (#668)
+* [WIP] Fix Flow DeclareTypeAlias (#669)
+* Add option for putting > on the last line in jsx (#661)
+* Always put a hardline before dangling comment (#675)
+* Fix comments in return statement argument (#657)
+* [RFC] Introduce prettier-ignore-next (#671)
+
 # 0.16.0
 
 [link](https://github.com/jlongster/prettier/compare/0.15.0...0.16.0)

@@ -1,4 +1,6 @@
-exports[`test destructuring.js 1`] = `
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`destructuring.js 1`] = `
 "// @flow
 
 let [x, y] = [1, 2];
@@ -33,6 +35,7 @@ export const X = {
   returnsATuple: function(): [number, number] {
     return [1, 2];
   },
+
   test: function() {
     let [a, b] = this.returnsATuple();
   }
@@ -40,10 +43,10 @@ export const X = {
 "
 `;
 
-exports[`test function_expressions.js 1`] = `
+exports[`function_expressions.js 1`] = `
 "// @flow
 
-// TODO: type-at-pos between the ()\'s should be () => void
+// TODO: type-at-pos between the ()'s should be () => void
 // class X {
 //   foo(): void {}
 // }
@@ -54,7 +57,7 @@ const y = {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // @flow
 
-// TODO: type-at-pos between the ()\'s should be () => void
+// TODO: type-at-pos between the ()'s should be () => void
 // class X {
 //   foo(): void {}
 // }
@@ -65,7 +68,7 @@ const y = {
 "
 `;
 
-exports[`test generics.js 1`] = `
+exports[`generics.js 1`] = `
 "// @flow
 
 class C<X> { }
@@ -124,7 +127,7 @@ mn;
 "
 `;
 
-exports[`test import.js 1`] = `
+exports[`import.js 1`] = `
 "// @flow
 var num = 42;
 function bar() { }
@@ -139,13 +142,13 @@ module.exports = num;
 "
 `;
 
-exports[`test object_special_cases.js 1`] = `
+exports[`object_special_cases.js 1`] = `
 "/* @flow */
 
 let tests = [
   function() {
     let x = {};
-    Object.defineProperty(x, \'foo\', { value: \'\' });
+    Object.defineProperty(x, 'foo', { value: '' });
   },
 ];
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -154,13 +157,13 @@ let tests = [
 let tests = [
   function() {
     let x = {};
-    Object.defineProperty(x, \"foo\", { value: \"\" });
+    Object.defineProperty(x, \\"foo\\", { value: \\"\\" });
   }
 ];
 "
 `;
 
-exports[`test optional.js 1`] = `
+exports[`optional.js 1`] = `
 "// @flow
 
 function foo(x?: string) {
@@ -195,7 +198,7 @@ function qux(x?) {
 "
 `;
 
-exports[`test predicates.js 1`] = `
+exports[`predicates.js 1`] = `
 "/* @flow */
 
 let x = 0;
@@ -215,16 +218,16 @@ if (Array.isArray(x)) {
 "
 `;
 
-exports[`test react.js 1`] = `
-"import React from \"react\";
+exports[`react.js 1`] = `
+"import React from \\"react\\";
 React.createElement;
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-import React from \"react\";
+import React from \\"react\\";
 React.createElement;
 "
 `;
 
-exports[`test templates.js 1`] = `
+exports[`templates.js 1`] = `
 "/* @flow */
 \`foo bar\`;
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -233,32 +236,32 @@ exports[`test templates.js 1`] = `
 "
 `;
 
-exports[`test test.js 1`] = `
+exports[`test.js 1`] = `
 "// @flow
-var str = require(\'./import\');
+var str = require('./import');
 function foo() { }
 foo();
 str
 
 type Point = [number, string];
-const x:Point = [1, \"foo\"];
-type MyStr = \"cool\";
-const y:MyStr = \"cool\";
+const x:Point = [1, \\"foo\\"];
+type MyStr = \\"cool\\";
+const y:MyStr = \\"cool\\";
 type MyBool = true;
 const z:MyBool = true;
 type MyNum = 42;
 const w:MyNum = 42;
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // @flow
-var str = require(\"./import\");
+var str = require(\\"./import\\");
 function foo() {}
 foo();
 str;
 
 type Point = [number, string];
-const x: Point = [1, \"foo\"];
-type MyStr = \"cool\";
-const y: MyStr = \"cool\";
+const x: Point = [1, \\"foo\\"];
+type MyStr = \\"cool\\";
+const y: MyStr = \\"cool\\";
 type MyBool = true;
 const z: MyBool = true;
 type MyNum = 42;
@@ -266,18 +269,17 @@ const w: MyNum = 42;
 "
 `;
 
-exports[`test trycatch.js 1`] = `
+exports[`trycatch.js 1`] = `
 "// @flow
 
 try {
-  throw \"foo\";
+  throw \\"foo\\";
 } catch (e) {}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // @flow
 
 try {
-  throw \"foo\";
-} catch (e) {
-}
+  throw \\"foo\\";
+} catch (e) {}
 "
 `;

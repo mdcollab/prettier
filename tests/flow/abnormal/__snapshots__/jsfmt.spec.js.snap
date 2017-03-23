@@ -1,4 +1,6 @@
-exports[`test break-continue.js 1`] = `
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`break-continue.js 1`] = `
 "function foo() {
     while(true) { break; }
 }
@@ -14,15 +16,14 @@ function foo() {
 }
 
 function bar() {
-  L:
-  do {
+  L: do {
     continue L;
   } while (false);
 }
 "
 `;
 
-exports[`test return.js 1`] = `
+exports[`return.js 1`] = `
 "function bar(x:number) { }
 function foo() {
     var x = null;

@@ -18,9 +18,15 @@ function guessLineEnding(text) {
 }
 
 function parse(text, opts) {
-  const parseFunction = opts.parser === "flow"
-    ? parser.parseWithFlow
-    : parser.parseWithBabylon;
+  let parseFunction;
+
+  if (opts.parser === 'flow') {
+    parseFunction = parser.parseWithFlow;
+  } else if (opts.parser === 'typescript') {
+    parseFunction = parser.parseWithTypeScript;
+  } else {
+    parseFunction = parser.parseWithBabylon;
+  }
 
   try {
     return parseFunction(text);
@@ -42,17 +48,32 @@ function attachComments(text, ast, opts) {
   const astComments = ast.comments;
   if (astComments) {
     delete ast.comments;
-    comments.attach(astComments, ast, text);
+    comments.attach(astComments, ast, text, opts);
   }
   ast.tokens = [];
-  opts.originalText = text;
+  opts.originalText = text.trimRight();
+  return astComments;
+}
+
+function ensureAllCommentsPrinted(astComments) {
+  astComments.forEach(comment => {
+    if (!comment.printed) {
+      throw new Error(
+        'Comment "' +
+          comment.value.trim() +
+          '" was not printed. Please report this error!'
+      );
+    }
+    delete comment.printed;
+  });
 }
 
 function format(text, opts) {
   const ast = parse(text, opts);
-  attachComments(text, ast, opts);
+  const astComments = attachComments(text, ast, opts);
   const doc = printAstToDoc(ast, opts);
   const str = printDocToString(doc, opts.printWidth, guessLineEnding(text));
+  ensureAllCommentsPrinted(astComments);
   return str;
 }
 

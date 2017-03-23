@@ -71,3 +71,24 @@ newlines_elems =
 
 
   </div>
+
+regression_extra_newline = (
+  <div>
+    <span
+      className="nuclide-console-new-messages-notification-icon icon icon-nuclicon-arrow-down"
+    />
+    New Messages
+  </div>
+);
+
+
+regression_extra_newline_2 = (
+  <div>
+    (
+    <FormattedMessage
+      id="some-id"
+      defaultMessage="some loooooooooooooooooooooooooooong default"
+    />
+    )
+  </div>
+);

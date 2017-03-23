@@ -1,4 +1,6 @@
-exports[`test function_return.js 1`] = `
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`function_return.js 1`] = `
 "class C {
     foo() { }
     bar() { return; }
@@ -73,12 +75,13 @@ function i(x): ?number {
 }
 
 module.exports = C;
+
 //function fn(x:number) { return x; }
 //module.exports = fn;
 "
 `;
 
-exports[`test void.js 1`] = `
+exports[`void.js 1`] = `
 "/* This is a regression test. At one point we incorrectly inferred the return
    type of functions that have an explicit \`undefined\` to be only \`undefined\` --
    ignoring other possible exits. */
@@ -86,7 +89,7 @@ function f(b) {
   if (b) {
     return undefined;
   } else {
-    return \"nope\";
+    return \\"nope\\";
   }
 }
 
@@ -99,7 +102,7 @@ function f(b) {
   if (b) {
     return undefined;
   } else {
-    return \"nope\";
+    return \\"nope\\";
   }
 }
 

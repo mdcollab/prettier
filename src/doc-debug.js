@@ -19,21 +19,19 @@ function flattenDoc(doc) {
     return Object.assign({}, doc, { parts: res });
   } else if (doc.type === "if-break") {
     return Object.assign({}, doc, {
-      breakContents: (
-        doc.breakContents != null ? flattenDoc(doc.breakContents) : null
-      ),
-      flatContents: (
-        doc.flatContents != null ? flattenDoc(doc.flatContents) : null
-      )
+      breakContents: doc.breakContents != null
+        ? flattenDoc(doc.breakContents)
+        : null,
+      flatContents: doc.flatContents != null
+        ? flattenDoc(doc.flatContents)
+        : null
     });
   } else if (doc.type === "group") {
     return Object.assign({}, doc, {
       contents: flattenDoc(doc.contents),
-      expandedStates: (
-        doc.expandedStates
-          ? doc.expandedStates.map(flattenDoc)
-          : doc.expandedStates
-      )
+      expandedStates: doc.expandedStates
+        ? doc.expandedStates.map(flattenDoc)
+        : doc.expandedStates
     });
   } else if (doc.contents) {
     return Object.assign({}, doc, { contents: flattenDoc(doc.contents) });
@@ -92,6 +90,12 @@ function printDoc(doc) {
       printDoc(doc.contents) +
       ")";
   }
+
+  if (doc.type === "line-suffix") {
+    return "lineSuffix(" + printDoc(doc.contents) + ")";
+  }
+
+  throw new Error("Unknown doc type " + doc.type);
 }
 
 module.exports = {

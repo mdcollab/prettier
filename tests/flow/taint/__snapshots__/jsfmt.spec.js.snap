@@ -1,4 +1,6 @@
-exports[`test adder.js 1`] = `
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`adder.js 1`] = `
 "// @flow
 
 function f(x : $Tainted<number>, y : $Tainted<number>) {
@@ -65,7 +67,7 @@ function f7(x: $Tainted<string>, y: $Tainted<number>) {
 "
 `;
 
-exports[`test any_object.js 1`] = `
+exports[`any_object.js 1`] = `
 "// @flow
 
 let tests = [
@@ -78,7 +80,7 @@ let tests = [
 
   // getting a property
   function() {
-    let obj: Object = { foo: \'foo\' };
+    let obj: Object = { foo: 'foo' };
     (obj.foo: $Tainted<string>); // ok
   },
 
@@ -101,11 +103,13 @@ let tests = [
     obj.foo = x; // error, taint ~> any
     obj[y] = x; // error, taint ~> any
   },
+
   // getting a property
   function() {
-    let obj: Object = { foo: \"foo\" };
+    let obj: Object = { foo: \\"foo\\" };
     (obj.foo: $Tainted<string>); // ok
   },
+
   // calling a method
   function(x: $Tainted<string>) {
     let obj: Object = {};
@@ -118,7 +122,7 @@ let tests = [
 "
 `;
 
-exports[`test call-object-property.js 1`] = `
+exports[`call-object-property.js 1`] = `
 "// @flow
 
 function foo(x : $Tainted<string>, o : Object) {
@@ -173,7 +177,7 @@ function f_foo3(f1: Function, o1: Object, o2: { t: $Tainted<string> }) {
 "
 `;
 
-exports[`test comparator.js 1`] = `
+exports[`comparator.js 1`] = `
 "// @flow
 // Should cause an error.
 function f(x : $Tainted<string>, y : $Tainted<number>) {
@@ -214,7 +218,7 @@ function f3(x: $Tainted<string>, y: string) {
 "
 `;
 
-exports[`test function.js 1`] = `
+exports[`function.js 1`] = `
 "// @flow
 
 let tests = [
@@ -237,6 +241,7 @@ let tests = [
   function(x: any, y: $Tainted<string>) {
     x(y); // error, taint ~> any
   },
+
   // calling \`any\` returns \`any\`
   function(x: any, y: $Tainted<string>) {
     let z = x();
@@ -246,7 +251,7 @@ let tests = [
 "
 `;
 
-exports[`test globals.js 1`] = `
+exports[`globals.js 1`] = `
 "// @flow
 
 class A {
@@ -275,7 +280,7 @@ class A {
 "
 `;
 
-exports[`test lib.js 1`] = `
+exports[`lib.js 1`] = `
 "declare class FakeLocation {
   assign(url: string): void;
 }
@@ -304,14 +309,14 @@ declare var fakeLocation: FakeLocation;
 "
 `;
 
-exports[`test taint1.js 1`] = `
+exports[`taint1.js 1`] = `
 "/*
  *
  * @flow
  */
 class A {
   f(tainted : $Tainted<string>) {
-    // This shouldn\'t give a warning (both are tainted)
+    // This shouldn't give a warning (both are tainted)
     var also_tainted : $Tainted<string> = tainted;
   }
 }
@@ -322,14 +327,14 @@ class A {
  */
 class A {
   f(tainted: $Tainted<string>) {
-    // This shouldn\'t give a warning (both are tainted)
+    // This shouldn't give a warning (both are tainted)
     var also_tainted: $Tainted<string> = tainted;
   }
 }
 "
 `;
 
-exports[`test taint2.js 1`] = `
+exports[`taint2.js 1`] = `
 "/*
  *
  * @flow
@@ -354,7 +359,7 @@ class A {
 "
 `;
 
-exports[`test taint3.js 1`] = `
+exports[`taint3.js 1`] = `
 "/*
  *
  * @flow
@@ -383,13 +388,13 @@ class A {
 "
 `;
 
-exports[`test taint4.js 1`] = `
+exports[`taint4.js 1`] = `
 "/*
  *
  * @flow
  */
 
-var safe : string = \"safe\";
+var safe : string = \\"safe\\";
 // This should be allowed.
 var tainted : $Tainted<string> = safe
 
@@ -403,7 +408,7 @@ function f(x : $Tainted<any>) {
  * @flow
  */
 
-var safe: string = \"safe\";
+var safe: string = \\"safe\\";
 // This should be allowed.
 var tainted: $Tainted<string> = safe;
 
@@ -414,7 +419,7 @@ function f(x: $Tainted<any>) {
 "
 `;
 
-exports[`test use-types.js 1`] = `
+exports[`use-types.js 1`] = `
 "/*
  * @flow
  */

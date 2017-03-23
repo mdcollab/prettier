@@ -1,4 +1,6 @@
-exports[`test test.js 1`] = `
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test.js 1`] = `
 "declare class Foo extends Qux<string> mixins Bar<number> {
   // KeyedCollection <: Collection
   // ...KeyedIterable
@@ -21,8 +23,8 @@ declare class Baz<T> {
 ((new Foo).z: number); // error: Qux wins
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 declare class Foo extends Qux<string> {
-  /* KeyedCollection <: Collection*/
-  /* ...KeyedIterable*/
+  // KeyedCollection <: Collection
+  // ...KeyedIterable
 }
 declare class Bar<T> extends Baz<T> {
   // KeyedIterable <: Iterable
@@ -44,11 +46,11 @@ declare class Baz<T> {
 "
 `;
 
-exports[`test test2.js 1`] = `
+exports[`test2.js 1`] = `
 "declare interface I { }
 declare class C mixins I { }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-interface I {}
+declare interface I {}
 declare class C {}
 "
 `;
