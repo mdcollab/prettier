@@ -1226,35 +1226,8 @@ function genericPrintNoParens(path, options, print) {
     case "JSXSpreadAttribute":
       return concat(["{...", path.call(print, "argument"), "}"]);
     case "JSXExpressionContainer": {
-      const parent = path.getParentNode(0);
-
-      const shouldInline = n.expression.type === "ArrayExpression" ||
-        n.expression.type === "ObjectExpression" ||
-        n.expression.type === "ArrowFunctionExpression" ||
-        n.expression.type === "CallExpression" ||
-        n.expression.type === "FunctionExpression" ||
-        n.expression.type === "JSXEmptyExpression" ||
-        (parent.type === "JSXElement" &&
-          (n.expression.type === "ConditionalExpression" ||
-            isBinaryish(n.expression)));
-
-      if (shouldInline) {
-        return group(
-          concat(["{", path.call(print, "expression"), lineSuffixBoundary, "}"])
-        );
-      }
-
       return group(
-        concat([
-          "{",
-          indent(
-            options.tabWidth,
-            concat([softline, path.call(print, "expression")])
-          ),
-          softline,
-          lineSuffixBoundary,
-          "}"
-        ])
+        concat(["{", path.call(print, "expression"), lineSuffixBoundary, "}"])
       );
     }
     case "JSXElement": {
