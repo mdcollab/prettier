@@ -1949,6 +1949,10 @@ function printStatementSequence(path, options, print) {
 
     if (util.isNextLineEmpty(text, stmt) && !isLastStatement(stmtPath)) {
       parts.push(hardline);
+
+      if (stmt.type === "ImportDeclaration" && text.slice(util.locEnd(stmt)).search(/\bimport\b/) === -1) {
+        parts.push(hardline);
+      }
     }
 
     printed.push(concat(parts));
