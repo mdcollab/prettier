@@ -798,6 +798,8 @@ function genericPrintNoParens(path, options, print) {
         const needsForcedTrailingComma = canHaveTrailingComma &&
           lastElem === null;
 
+        const printedArrayItems = printArrayItems(path, options, "elements", print);
+
         parts.push(
           group(
             concat([
@@ -805,8 +807,8 @@ function genericPrintNoParens(path, options, print) {
               indent(
                 options.tabWidth,
                 concat([
-                  softline,
-                  printArrayItems(path, options, "elements", print)
+                  printedArrayItems.parts.some(willBreak)? hardline: softline,
+                  printedArrayItems
                 ])
               ),
               needsForcedTrailingComma ? "," : "",
