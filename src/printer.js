@@ -200,7 +200,7 @@ function genericPrintNoParens(path, options, print) {
       if (
         parent.type === "AssignmentExpression" ||
         parent.type === "VariableDeclarator" ||
-        shouldInlineLogicalExpression(n) ||
+        shouldInlineLogicalExpression(n, path) ||
         parent.type === "ReturnStatement" ||
         (n !== parent.body &&
           (parent.type === "IfStatement" ||
@@ -2967,10 +2967,15 @@ function isBinaryish(node) {
   return node.type === "BinaryExpression" || node.type === "LogicalExpression";
 }
 
-function shouldInlineLogicalExpression(node) {
+function shouldInlineLogicalExpression(node, path) {
   return node.type === "LogicalExpression" &&
     (node.right.type === "ObjectExpression" ||
-      node.right.type === "ArrayExpression");
+      node.right.type === "ArrayExpression" ||
+      node.right.type === "JSXElement" ||
+      (path &&
+        path.getParentNode() &&
+        path.getParentNode().type === "LogicalExpression" &&
+        path.getParentNode().right.type === "JSXElement"));
 }
 
 // For binary expressions to be consistent, we need to group
@@ -3018,7 +3023,7 @@ function printBinaryishExpressions(path, print, options, isNested) {
 
     const right = concat([
       node.operator,
-      shouldInlineLogicalExpression(node) ? " " : line,
+      shouldInlineLogicalExpression(node, path) ? " " : line,
       path.call(print, "right")
     ]);
 
