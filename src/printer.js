@@ -1263,13 +1263,8 @@ function genericPrintNoParens(path, options, print) {
     case "JSXOpeningElement": {
       const n = path.getValue();
 
-      // don't break up opening elements with a single long text attribute
-      if (
-        n.attributes.length === 1 &&
-        n.attributes[0].value &&
-        n.attributes[0].value.type === "Literal" &&
-        typeof n.attributes[0].value.value === "string"
-      ) {
+      // don't break up opening elements with one attribute
+      if (n.attributes.length === 1) {
         return group(
           concat([
             "<",
@@ -1289,7 +1284,7 @@ function genericPrintNoParens(path, options, print) {
             indent(
               options.tabWidth,
               concat(
-                path.map(attr => concat([line, print(attr)]), "attributes")
+                path.map(attr => concat([hardline, print(attr)]), "attributes")
               )
             ),
             n.selfClosing ? line : options.jsxBracketSameLine ? ">" : softline
