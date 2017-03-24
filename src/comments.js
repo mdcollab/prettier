@@ -773,7 +773,7 @@ function printTrailingComment(commentPath, print, options, parentNode) {
     return concat([" ", contents]);
   }
 
-  return concat([lineSuffix(" " + contents), !isBlock ? breakParent : ""]);
+  return concat([lineSuffix("  " + contents), !isBlock ? breakParent : ""]);
 }
 
 function printDanglingComments(path, options, sameIndent) {
