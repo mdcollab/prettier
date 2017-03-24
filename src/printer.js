@@ -2635,11 +2635,11 @@ function printMemberChain(path, options, print) {
     return concat(printedGroup.map(tuple => tuple.printed));
   }
 
-  function printIndentedGroup(groups) {
+  function printIndentedGroup(groups, noIndent) {
     return groups.length === 0?
       "":
       indent(
-        options.tabWidth,
+        noIndent? 0: options.tabWidth,
         group(concat([hardline, join(hardline, groups.map(printGroup))]))
       );
   }
@@ -2653,7 +2653,7 @@ function printMemberChain(path, options, print) {
   const expanded = concat([
     printGroup(groups[0]),
     shouldMerge ? concat(groups.slice(1, 2).map(printGroup)) : "",
-    printIndentedGroup(groups.slice(shouldMerge ? 2 : 1))
+    printIndentedGroup(groups.slice(shouldMerge ? 2 : 1), willBreak(printedGroups[shouldMerge? 1: 0]))
   ]);
 
   // If there's a comment, we don't want to print in one line.
