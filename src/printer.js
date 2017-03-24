@@ -2675,17 +2675,6 @@ function printMemberChain(path, options, print) {
     (groups.length >= 2 && groups[1][0].node.comments) ||
     (groups.length >= 3 && groups[2][0].node.comments);
 
-  // If we only have a single `.`, we shouldn't do anything fancy and just
-  // render everything concatenated together.
-  if (
-    groups.length <= (shouldMerge ? 3 : 2) &&
-    !hasComment &&
-    // (a || b).map() should be break before .map() instead of ||
-    groups[0][0].node.type !== "LogicalExpression"
-  ) {
-    return group(oneLine);
-  }
-
   const expanded = concat([
     printGroup(groups[0]),
     shouldMerge ? concat(groups.slice(1, 2).map(printGroup)) : "",
