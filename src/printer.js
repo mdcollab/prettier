@@ -2636,10 +2636,12 @@ function printMemberChain(path, options, print) {
   }
 
   function printIndentedGroup(groups) {
-    return indent(
-      options.tabWidth,
-      group(concat([hardline, join(hardline, groups.map(printGroup))]))
-    );
+    return groups.length === 0?
+      "":
+      indent(
+        options.tabWidth,
+        group(concat([hardline, join(hardline, groups.map(printGroup))]))
+      );
   }
 
   const printedGroups = groups.map(printGroup);
