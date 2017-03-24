@@ -1258,8 +1258,7 @@ function genericPrintNoParens(path, options, print) {
       );
     }
     case "JSXElement": {
-      const elem = printJSXElement(path, options, print);
-      return maybeWrapJSXElementInParens(path, elem, options);
+      return printJSXElement(path, options, print);
     }
     case "JSXOpeningElement": {
       const n = path.getValue();
