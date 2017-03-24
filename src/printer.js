@@ -2158,7 +2158,9 @@ function printFunctionParams(path, print, options) {
   //   })                    ) => {
   //                         })
   const parent = path.getParentNode();
+  const insideConnectCall = parent.type === "CallExpression" && parent.callee.name === "connect";
   if (
+    !insideConnectCall &&
     (parent.type === "CallExpression" || parent.type === "NewExpression") &&
     ((util.getLast(parent.arguments) === path.getValue() &&
       shouldGroupLastArg(parent.arguments)) ||
@@ -2181,6 +2183,7 @@ function printFunctionParams(path, print, options) {
     (fun.params[0].type === "ObjectPattern" ||
       fun.params[0].type === "FunctionTypeParam" &&
         fun.params[0].typeAnnotation.type === "ObjectTypeAnnotation") &&
+    !insideConnectCall &&
     !fun.rest) {
     return concat(["(", join(", ", printed), ")"]);
   }
