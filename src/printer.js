@@ -2198,12 +2198,15 @@ function printFunctionParams(path, print, options) {
     isFlowShorthandWithOneArg ? "" : "(",
     indent(
       options.tabWidth,
-      concat([softline, join(concat([",", line]), printed)])
+      concat([
+        insideConnectCall? hardline: softline,
+        join(concat([",", insideConnectCall? hardline: line]), printed),
+      ])
     ),
     ifBreak(
       canHaveTrailingComma && shouldPrintComma(options, "all") ? "," : ""
     ),
-    softline,
+    insideConnectCall? hardline: softline,
     isFlowShorthandWithOneArg ? "" : ")"
   ]);
 }
