@@ -323,7 +323,7 @@ function genericPrintNoParens(path, options, print) {
       // as the arrow.
       if (
         n.body.type === "ArrayExpression" ||
-        n.body.type === "ObjectExpression" ||
+        (n.body.type === "ObjectExpression" && !n.body.properties.some(isActionProperty)) ||
         (n.body.type === "JSXElement" && parent.type !== "VariableDeclarator") ||
         n.body.type === "BlockStatement" ||
         n.body.type === "TaggedTemplateExpression" ||
