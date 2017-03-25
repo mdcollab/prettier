@@ -2603,6 +2603,7 @@ function printMemberChain(path, options, print) {
         (
           groups[0][0].node.name.match(/(^[A-Z])|^[_$]+$/) ||
           groups[0][0].node.name === "api" ||
+          groups[0][0].node.name === "response" ||
           groups[0][0].node.name === "navigator"
         ))) &&
     groups.length >= 2;
