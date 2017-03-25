@@ -883,7 +883,11 @@ function genericPrintNoParens(path, options, print) {
       if (n.prefix) parts.reverse();
 
       return concat(parts);
-    case "ConditionalExpression":
+    case "ConditionalExpression": {
+      const printedConsequent = path.call(print, "consequent");
+      const printedAlternate = path.call(print, "alternate");
+      const consequentOrAlternateWillBreak = willBreak(printedConsequent) || willBreak(printedAlternate);
+
       return group(
         concat([
           path.call(print, "test"),
@@ -891,15 +895,16 @@ function genericPrintNoParens(path, options, print) {
           indent(
             options.tabWidth,
             concat([
-              line,
-              path.call(print, "consequent"),
+              consequentOrAlternateWillBreak? hardline: line,
+              printedConsequent,
               ":",
-              line,
-              path.call(print, "alternate")
+              consequentOrAlternateWillBreak? hardline: line,
+              printedAlternate
             ])
           )
         ])
       );
+    }
     case "NewExpression":
       parts.push("new ", path.call(print, "callee"));
 
