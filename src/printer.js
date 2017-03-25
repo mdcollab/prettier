@@ -657,7 +657,8 @@ function genericPrintNoParens(path, options, print) {
       var parent = path.getParentNode(0);
       var parentIsUnionTypeAnnotation = parent.type === "UnionTypeAnnotation";
       var propertiesField = isTypeScriptTypeAnnotaion ? "members" : "properties";
-      var dontBreak = n.type === "ObjectPattern";
+      var dontBreak = n.type === "ObjectPattern" ||
+        (parent.type === "CallExpression" && parent.callee.name === "dispatch");
 
       if (isTypeAnnotation) {
         fields.push("indexers", "callProperties");
