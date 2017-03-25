@@ -2634,7 +2634,11 @@ function printMemberChain(path, options, print) {
   const shouldMerge = groups[0].length === 1 &&
     (groups[0][0].node.type === "ThisExpression" ||
       (groups[0][0].node.type === "Identifier" &&
-        (groups[0][0].node.name.match(/(^[A-Z])|^[_$]+$/) || groups[0][0].node.name === "api"))) &&
+        (
+          groups[0][0].node.name.match(/(^[A-Z])|^[_$]+$/) ||
+          groups[0][0].node.name === "api" ||
+          groups[0][0].node.name === "navigator"
+        ))) &&
     groups.length >= 2;
 
   function printGroup(printedGroup) {
