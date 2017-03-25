@@ -37,7 +37,7 @@ var isActionProperty = obj =>
   obj.value.name &&
   obj.value.name.search(/^[A-Z_]+$/) !== -1;
 
-var isAction = () => path
+var isAction = path => path
   .map(childPath => childPath.getValue(), "properties")
   .some(isActionProperty);
 
