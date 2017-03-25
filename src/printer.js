@@ -475,21 +475,11 @@ function genericPrintNoParens(path, options, print) {
 
         if (grouped.length > 0) {
           parts.push(
-            group(
-              concat([
-                "{",
-                indent(
-                  options.tabWidth,
-                  concat([
-                    options.bracketSpacing ? line : softline,
-                    join(concat([",", line]), grouped)
-                  ])
-                ),
-                ifBreak(shouldPrintComma(options) ? "," : ""),
-                options.bracketSpacing ? line : softline,
-                "}"
-              ])
-            )
+            concat([
+              "{",
+              concat([join(", ", grouped)]),
+              "}"
+            ])
           );
         }
 
