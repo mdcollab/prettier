@@ -656,6 +656,7 @@ function genericPrintNoParens(path, options, print) {
       var parent = path.getParentNode(0);
       var parentIsUnionTypeAnnotation = parent.type === "UnionTypeAnnotation";
       var propertiesField = isTypeScriptTypeAnnotaion ? "members" : "properties";
+      var dontBreak = n.type === "ObjectPattern";
 
       if (isTypeAnnotation) {
         fields.push("indexers", "callProperties");
@@ -672,7 +673,7 @@ function genericPrintNoParens(path, options, print) {
             props.push(concat(separatorParts));
             props.push(group(print(childPath)));
 
-            separatorParts = [separator, n.type === "ObjectPattern"? " ": line];
+            separatorParts = [separator, dontBreak? " ": line];
             if (
               util.isNextLineEmpty(options.originalText, childPath.getValue())
             ) {
@@ -703,7 +704,7 @@ function genericPrintNoParens(path, options, print) {
             "}"
           ])
         );
-      } else if (n.type === "ObjectPattern") {
+      } else if (dontBreak) {
         return concat([
           leftBrace,
           concat(props),
