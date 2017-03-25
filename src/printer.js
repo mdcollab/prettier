@@ -2157,67 +2157,25 @@ function printFunctionParams(path, print, options) {
   const lastParam = util.getLast(fun[paramsField]);
   const canHaveTrailingComma = !(lastParam &&
     lastParam.type === "RestElement") && !fun.rest;
-
-  // If the parent is a call with the first/last argument expansion and this is the
-  // params of the first/last argument, we dont want the arguments to break and instead
-  // want the whole expression to be on a new line.
-  //
-  // Good:                 Bad:
-  //   verylongcall(         verylongcall((
-  //     (a, b) => {           a,
-  //     }                     b,
-  //   })                    ) => {
-  //                         })
   const parent = path.getParentNode();
-  const insideConnectCall = parent.type === "CallExpression" && parent.callee.name === "connect";
-  if (
-    !insideConnectCall &&
-    (parent.type === "CallExpression" || parent.type === "NewExpression") &&
-    ((util.getLast(parent.arguments) === path.getValue() &&
-      shouldGroupLastArg(parent.arguments)) ||
-      (parent.arguments[0] === path.getValue() &&
-        shouldGroupFirstArg(parent.arguments)))
-  ) {
-    return concat(["(", join(", ", printed), ")"]);
-  }
 
-  // Single object destructuring should hug
-  //
-  // function({
-  //   a,
-  //   b,
-  //   c
-  // }) {}
-  if (fun.params &&
-    fun.params.length === 1 &&
-    !fun.params[0].comments &&
-    (fun.params[0].type === "ObjectPattern" ||
-      fun.params[0].type === "FunctionTypeParam" &&
-        fun.params[0].typeAnnotation.type === "ObjectTypeAnnotation") &&
-    !insideConnectCall &&
-    !fun.rest) {
-    return concat(["(", join(", ", printed), ")"]);
-  }
-
-  const isFlowShorthandWithOneArg = (isObjectTypePropertyAFunction(parent) ||
-    isTypeAnnotationAFunction(parent) || parent.type === "TypeAlias") &&
-    fun[paramsField].length === 1 && fun[paramsField][0].name === null && !fun.rest;
-
-  return concat([
-    isFlowShorthandWithOneArg ? "" : "(",
+  if (parent.type === "CallExpression" && parent.callee.name === "connect") return concat([
+    "(",
     indent(
       options.tabWidth,
       concat([
-        insideConnectCall? hardline: softline,
-        join(concat([",", insideConnectCall? hardline: line]), printed),
+        hardline,
+        join(concat([",", hardline]), printed),
       ])
     ),
     ifBreak(
       canHaveTrailingComma && shouldPrintComma(options, "all") ? "," : ""
     ),
-    insideConnectCall? hardline: softline,
-    isFlowShorthandWithOneArg ? "" : ")"
+    hardline,
+    ")"
   ]);
+
+  return concat(["(", join(", ", printed), ")"]);
 }
 
 function printFunctionDeclaration(path, print, options) {
