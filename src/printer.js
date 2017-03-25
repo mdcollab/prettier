@@ -609,6 +609,7 @@ function genericPrintNoParens(path, options, print) {
       return concat(parts);
     case "CallExpression": {
       if (
+        (n.callee.type === "Identifier" && n.callee.name === "dispatch") ||
         // We want to keep require calls as a unit
         (n.callee.type === "Identifier" && n.callee.name === "require") ||
         // Keep test declarations on a single line
