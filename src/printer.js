@@ -319,6 +319,7 @@ function genericPrintNoParens(path, options, print) {
         n.body.type === "TaggedTemplateExpression" ||
         n.body.type === "TemplateElement" ||
         n.body.type === "ClassExpression" ||
+        (n.body.type === "CallExpression" && parent.type === "JSXExpressionContainer") ||
         n.body.type === "ArrowFunctionExpression"
       ) {
         return group(collapsed);
