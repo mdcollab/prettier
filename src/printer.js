@@ -273,7 +273,7 @@ function genericPrintNoParens(path, options, print) {
     case "FunctionDeclaration":
     case "FunctionExpression":
       return printFunctionDeclaration(path, print, options)
-    case "ArrowFunctionExpression":
+    case "ArrowFunctionExpression": {
       if (n.async) parts.push("async ");
 
       if (n.typeParameters) {
@@ -307,12 +307,14 @@ function genericPrintNoParens(path, options, print) {
 
       const body = path.call(print, "body");
       const collapsed = concat([concat(parts), " ", body]);
+      const parent = path.getParentNode();
 
       // We want to always keep these types of nodes on the same line
       // as the arrow.
       if (
         n.body.type === "ArrayExpression" ||
         n.body.type === "ObjectExpression" ||
+        (n.body.type === "JSXElement" && parent.type !== "VariableDeclarator") ||
         n.body.type === "BlockStatement" ||
         n.body.type === "TaggedTemplateExpression" ||
         n.body.type === "TemplateElement" ||
@@ -328,6 +330,7 @@ function genericPrintNoParens(path, options, print) {
           group(indent(options.tabWidth, concat([line, body])))
         ])
       );
+    }
     case "MethodDefinition":
       if (n.static) {
         parts.push("static ");
