@@ -1383,12 +1383,10 @@ function genericPrintNoParens(path, options, print) {
 
       function removeLines(doc) {
         // Force this doc into flat mode by statically converting all
-        // lines into spaces (or soft lines into nothing). Hard lines
-        // should still output because there's too great of a chance
-        // of breaking existing assumptions otherwise.
+        // lines into spaces (or soft lines into nothing).
         return docUtils.mapDoc(doc, d => {
-          if (d.type === "line" && !d.hard) {
-            return d.soft ? "" : " ";
+          if (d.type === "line") {
+            return d.soft || d.hard ? "" : " ";
           } else if (d.type === "if-break") {
             return d.flatContents || "";
           }
