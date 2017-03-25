@@ -46,7 +46,9 @@ function mapDoc(doc, func) {
       flatContents: doc.flatContents && mapDoc(doc.flatContents, func)
     });
   } else if (doc.contents) {
-    return Object.assign({}, doc, { contents: mapDoc(doc.contents, func) });
+    return Object.assign({}, doc, {
+      contents: mapDoc(doc.contents, func),
+    });
   } else {
     return doc;
   }
