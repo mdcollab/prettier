@@ -48,6 +48,9 @@ function mapDoc(doc, func) {
   } else if (doc.contents) {
     return Object.assign({}, doc, {
       contents: mapDoc(doc.contents, func),
+      expandedStates: doc.expandedStates?
+        doc.expandedStates.map(d => mapDoc(d, func)):
+        doc.expandedStates,
     });
   } else {
     return doc;
