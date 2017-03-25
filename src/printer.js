@@ -31,6 +31,16 @@ var namedTypes = types.namedTypes;
 var isString = types.builtInTypes.string;
 var isObject = types.builtInTypes.object;
 
+var isActionProperty = obj =>
+  obj.type === "ObjectProperty" &&
+  obj.key.name === "type" &&
+  obj.value.name &&
+  obj.value.name.search(/^[A-Z_]+$/) !== -1;
+
+var isAction = () => path
+  .map(childPath => childPath.getValue(), "properties")
+  .some(isActionProperty);
+
 function shouldPrintComma(options, level) {
   level = level || "es5";
 
@@ -658,6 +668,7 @@ function genericPrintNoParens(path, options, print) {
       var parentIsUnionTypeAnnotation = parent.type === "UnionTypeAnnotation";
       var propertiesField = isTypeScriptTypeAnnotaion ? "members" : "properties";
       var dontBreak = n.type === "ObjectPattern" ||
+        isAction(path) ||
         (parent.type === "CallExpression" && parent.callee.name === "dispatch");
 
       if (isTypeAnnotation) {
