@@ -2137,7 +2137,7 @@ function printFunctionParams(path, print, options) {
   var fun = path.getValue();
   // namedTypes.Function.assert(fun);
   var paramsField = fun.type === "TSFunctionType" ? "parameters" : "params";
-  var printed = path.map(print, paramsField);
+  var printed = path.map(print, paramsField).map(insideConnectCall? x => x: removeLines);
 
   if (fun.defaults) {
     path.each(
