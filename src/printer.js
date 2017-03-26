@@ -49,6 +49,7 @@ const propNames1 = [
   "dispatch",
   "navigator",
   "style",
+  "textStyle",
 ];
 
 const getPropSortNumber = (name, i) => {
