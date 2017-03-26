@@ -2132,6 +2132,8 @@ function printArgumentsList(path, options, print) {
 }
 
 function printFunctionParams(path, print, options) {
+  var parent = path.getParentNode();
+  var insideConnectCall = parent.type === "CallExpression" && parent.callee.name === "connect";
   var fun = path.getValue();
   // namedTypes.Function.assert(fun);
   var paramsField = fun.type === "TSFunctionType" ? "parameters" : "params";
@@ -2166,9 +2168,8 @@ function printFunctionParams(path, print, options) {
   const lastParam = util.getLast(fun[paramsField]);
   const canHaveTrailingComma = !(lastParam &&
     lastParam.type === "RestElement") && !fun.rest;
-  const parent = path.getParentNode();
 
-  if (parent.type === "CallExpression" && parent.callee.name === "connect") return concat([
+  if (insideConnectCall) return concat([
     "(",
     indent(
       options.tabWidth,
