@@ -41,18 +41,19 @@ var isAction = path => path
   .map(childPath => childPath.getValue(), "properties")
   .some(isActionProperty);
 
-const getJSXAttrSortNumber = doc => {
-  const attrName = doc.parts[1].parts[0].parts[0].parts[0];
-
-  switch (attrName) {
+const getPropSortNumber = name => {
+  switch (name) {
     case "key": return 0;
     case "ref": return 1;
     case "style": return 2;
     case "dispatch": return 3;
     case "navigator": return 4;
-    default: return attrName.search("^on[A-Z]") === -1? 5: 6;
+    default: return name.search("^on[A-Z]") === -1? 5: 6;
   }
 };
+
+const getJSXAttrSortNumber = doc =>
+  getPropSortNumber(doc.parts[1].parts[0].parts[0].parts[0]);
 
 function removeLines(doc) {
   // Force this doc into flat mode by statically converting all
