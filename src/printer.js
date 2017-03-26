@@ -513,6 +513,10 @@ function genericPrintNoParens(path, options, print) {
       var standalones = [];
       var grouped = [];
       if (n.specifiers && n.specifiers.length > 0) {
+        n.specifiers = n.specifiers
+          .slice()
+          .sort((x, y) => x.imported.name.toLowerCase() < y.imported.name.toLowerCase()? -1: 1);
+
         path.each(
           function(specifierPath) {
             var value = specifierPath.getValue();
