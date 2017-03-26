@@ -45,6 +45,7 @@ const propNames1 = [
   "key",
   "ref",
   "onLayout",
+  "children",
   "dispatch",
   "navigator",
   "style",
