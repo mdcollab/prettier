@@ -56,8 +56,8 @@ const getPropSortNumber = (name, i) => {
   const index = propNames1.indexOf(name);
 
   if (index !== -1) return index;
-  if (name.search("^on[A-Z]") !== -1) return i + 200;
-  if (name.search("^all[A-Z]") !== -1) return i + 300;
+  if (name.search(/^on[A-Z]/) !== -1) return i + 200;
+  if (name.search(/^all[A-Z]/) !== -1) return i + 300;
   if (name === "store") return i + 400;
   return i + 100;
 };
