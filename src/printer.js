@@ -1993,6 +1993,22 @@ function genericPrintNoParens(path, options, print) {
   }
 }
 
+const sortImports = statements => {
+  const imports = [];
+
+  for (let i = 0; i < statements.length; i++) {
+    const stmt = statements[i];
+    if (stmt.type !== "ImportDeclaration") break;
+    imports.push(stmt);
+  }
+
+  return imports
+    .map((imp, i) => [imp, i])
+    .sort(([imp1, i1], [imp2, i2]) => getImportSortNumber(imp1, i1) - getImportSortNumber(imp2, i2))
+    .map(([imp, i]) => imp)
+    .concat(statements.slice(imports.length));
+};
+
 function printStatementSequence(path, options, print) {
   let printed = [];
 
