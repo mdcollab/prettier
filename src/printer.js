@@ -72,6 +72,11 @@ const getJSXAttrSortNumber = (doc, i) =>
     getPropSortNumber(doc.parts[1].parts[0].parts[0].parts[0], i):
     i + 100;
 
+const getObjectPropSortNumber = (objectProp, i) =>
+  access(() => objectProp.key.name.search)?
+    getPropSortNumber(objectProp.key.name, i):
+    i + 100;
+
 function removeLines(doc) {
   // Force this doc into flat mode by statically converting all
   // lines into spaces (or soft lines into nothing).
