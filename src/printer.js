@@ -59,8 +59,18 @@ const getPropSortNumber = (name, i) => {
   return i + 100;
 };
 
+const access = f => {
+  try {
+    return f();
+  } catch (e) {
+    return undefined;
+  }
+};
+
 const getJSXAttrSortNumber = (doc, i) =>
-  getPropSortNumber(doc.parts[1].parts[0].parts[0].parts[0], i);
+  access(() => doc.parts[1].parts[0].parts[0].parts[0].search)?
+    getPropSortNumber(doc.parts[1].parts[0].parts[0].parts[0], i):
+    i + 100;
 
 function removeLines(doc) {
   // Force this doc into flat mode by statically converting all
