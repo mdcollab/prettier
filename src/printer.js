@@ -41,19 +41,26 @@ var isAction = path => path
   .map(childPath => childPath.getValue(), "properties")
   .some(isActionProperty);
 
-const getPropSortNumber = name => {
-  switch (name) {
-    case "key": return 0;
-    case "ref": return 1;
-    case "style": return 2;
-    case "dispatch": return 3;
-    case "navigator": return 4;
-    default: return name.search("^on[A-Z]") === -1? 5: 6;
-  }
+const propNames1 = [
+  "key",
+  "ref",
+  "onLayout",
+  "dispatch",
+  "navigator",
+  "style",
+];
+
+const getPropSortNumber = (name, i) => {
+  const index = propNames1.indexOf(name);
+
+  if (index !== -1) return index;
+  if (name.search("^on[A-Z]") !== -1) return i + 200;
+  if (name.search("^all[A-Z]") !== -1) return i + 300;
+  return i + 100;
 };
 
-const getJSXAttrSortNumber = doc =>
-  getPropSortNumber(doc.parts[1].parts[0].parts[0].parts[0]);
+const getJSXAttrSortNumber = (doc, i) =>
+  getPropSortNumber(doc.parts[1].parts[0].parts[0].parts[0], i);
 
 function removeLines(doc) {
   // Force this doc into flat mode by statically converting all
@@ -1308,7 +1315,9 @@ function genericPrintNoParens(path, options, print) {
               concat(
                 path.map(attr => concat([hardline, print(attr)]), "attributes")
                   .slice()
-                  .sort((doc1, doc2) => getJSXAttrSortNumber(doc1) - getJSXAttrSortNumber(doc2))
+                  .map((doc, i) => [doc, i])
+                  .sort(([doc1, i1], [doc2, i2]) => getJSXAttrSortNumber(doc1, i1) - getJSXAttrSortNumber(doc2, i2))
+                  .map(([doc, i]) => doc)
               )
             ),
             n.selfClosing ? line : options.jsxBracketSameLine ? ">" : softline
