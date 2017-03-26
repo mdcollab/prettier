@@ -80,6 +80,31 @@ const getObjectPropSortNumber = (objectProp, i) =>
     getPropSortNumber(objectProp.key.name, i):
     i + 100;
 
+const imports1 = [
+  "react",
+  "react-native",
+  "react-redux",
+];
+
+const getImportSortNumber = (imp, i) => {
+  const name = imp.source.value;
+  const index = imports1.indexOf(name);
+
+  if (index !== -1) return index;
+  if (name.search(/^\./)                === -1) return i + 100;
+  if (name.search(/\.\.\/config$/)      !== -1) return i + 200;
+  if (name.search(/\.\.\/store\//)      !== -1) return i + 300;
+  if (name.search(/\.\.\/constants\//)  !== -1) return i + 400;
+  if (name.search(/\.\.\/lib\//)        !== -1) return i + 500;
+  if (name.search(/\.\.\/npm\//)        !== -1) return i + 600;
+  if (name.search(/\.\.\/utils\//)      !== -1) return i + 700;
+  if (name.search(/\.\.\/actions\//)    !== -1) return i + 800;
+  if (name.search(/\.\.\/components\//) !== -1) return i + 900;
+  if (name.search(/^\.\//)              !== -1) return i + 1000;
+  if (name.search(/\.\.\/styles\//)     !== -1) return i + 1100;
+                                                return i + 1200;
+};
+
 function removeLines(doc) {
   // Force this doc into flat mode by statically converting all
   // lines into spaces (or soft lines into nothing).
