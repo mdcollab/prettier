@@ -41,6 +41,19 @@ var isAction = path => path
   .map(childPath => childPath.getValue(), "properties")
   .some(isActionProperty);
 
+const getJSXAttrSortNumber = doc => {
+  const attrName = doc.parts[1].parts[0].parts[0].parts[0];
+
+  switch (attrName) {
+    case "key": return 0;
+    case "ref": return 1;
+    case "style": return 2;
+    case "dispatch": return 3;
+    case "navigator": return 4;
+    default: return attrName.search("^on[A-Z]") === -1? 5: 6;
+  }
+};
+
 function removeLines(doc) {
   // Force this doc into flat mode by statically converting all
   // lines into spaces (or soft lines into nothing).
@@ -1293,6 +1306,8 @@ function genericPrintNoParens(path, options, print) {
               options.tabWidth,
               concat(
                 path.map(attr => concat([hardline, print(attr)]), "attributes")
+                  .slice()
+                  .sort((doc1, doc2) => getJSXAttrSortNumber(doc1) - getJSXAttrSortNumber(doc2))
               )
             ),
             n.selfClosing ? line : options.jsxBracketSameLine ? ">" : softline
