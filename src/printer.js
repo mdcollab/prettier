@@ -729,6 +729,16 @@ function genericPrintNoParens(path, options, print) {
       var props = [];
       let separatorParts = [];
 
+      if (n.type === "ObjectPattern") {
+        const topStackValue = path.stack[path.stack.length - 1];
+        topStackValue[propertiesField] =
+          topStackValue[propertiesField]
+            .slice()
+            .map((p, i) => [p, i])
+            .sort(([p1, i1], [p2, i2]) => getObjectPropSortNumber(p1, i1) - getObjectPropSortNumber(p2, i2))
+            .map(([p, i]) => p);
+      }
+
       fields.forEach(function(field) {
         path.each(
           function(childPath) {
