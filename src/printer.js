@@ -2635,12 +2635,20 @@ function printMemberChain(path, options, print) {
   const hasComment =
     (groups.length >= 2 && groups[1][0].node.comments) ||
     (groups.length >= 3 && groups[2][0].node.comments);
+  const group1 = groups[shouldMerge? 2: 1];
+  const isThenCall =
+    group1 &&
+    group1[0] &&
+    group1[0].node &&
+    group1[0].node.property &&
+    group1[0].node.property.name === "then";
 
   // If we only have a single `.`, we shouldn't do anything fancy and just
   // render everything concatenated together.
   if (
     groups.length <= (shouldMerge ? 3 : 2) &&
     !hasComment &&
+    !isThenCall &&
     // (a || b).map() should be break before .map() instead of ||
     groups[0][0].node.type !== "LogicalExpression"
   ) {
