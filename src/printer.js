@@ -94,7 +94,7 @@ const getImportSortNumber = (imp, i) => {
   const index = imports1.indexOf(name);
 
   if (index !== -1) return index;
-  if (name.search(/^\./)                === -1) return i + 100;
+  if (isExternalImport(imp))                    return i + 100;
   if (name.search(/\.\.\/config$/)      !== -1) return i + 200;
   if (name.search(/\.\.\/store\//)      !== -1) return i + 300;
   if (name.search(/\.\.\/constants\//)  !== -1) return i + 400;
