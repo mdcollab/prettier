@@ -8,6 +8,7 @@ const printDocToString = require("./src/doc-printer").printDocToString;
 const normalizeOptions = require("./src/options").normalize;
 const parser = require("./src/parser");
 const printDocToDebug = require("./src/doc-debug").printDocToDebug;
+const util = require("./src/util");
 
 function guessLineEnding(text) {
   const index = text.indexOf("\n");
@@ -57,7 +58,7 @@ function attachComments(text, ast, opts) {
 
 function ensureAllCommentsPrinted(astComments) {
   astComments.forEach(comment => {
-    if (!comment.printed) {
+    if (!comment.printed && !util.isFlowFileMarker(comment)) {
       throw new Error(
         'Comment "' +
           comment.value.trim() +

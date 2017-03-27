@@ -246,6 +246,8 @@ function genericPrintNoParens(path, options, print) {
         );
       }
 
+      parts.push(concat(["/* @flow */", hardline, hardline]));
+
       parts.push(
         path.call(
           function(bodyPath) {

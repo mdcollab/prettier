@@ -824,7 +824,7 @@ function printComments(path, print, options) {
       var leading = types.getFieldValue(comment, "leading");
       var trailing = types.getFieldValue(comment, "trailing");
 
-      if (leading) {
+      if (leading && !util.isFlowFileMarker(comment)) {
         leadingParts.push(printLeadingComment(commentPath, print, options));
 
         const text = options.originalText;
