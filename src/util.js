@@ -305,9 +305,14 @@ function getPrecedence(op) {
   return PRECEDENCE[op];
 }
 
+function isFlowFileMarker(comment) {
+  return comment.value.search(/^[ ]?@flow[ ]?$/) !== -1;
+}
+
 module.exports = {
   comparePos,
   getPrecedence,
+  isFlowFileMarker,
   fixFaultyLocations,
   isExportDeclaration,
   getParentExportDeclaration,
