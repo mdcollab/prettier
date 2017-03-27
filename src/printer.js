@@ -80,6 +80,9 @@ const getObjectPropSortNumber = (objectProp, i) =>
     getPropSortNumber(objectProp.key.name, i):
     i + 100;
 
+const isImport = statement => statement.type === "ImportDeclaration";
+const isExternalImport = statement => statement.source.value.search(/^\./) === -1;
+
 const imports1 = [
   "react",
   "react-native",
