@@ -2000,9 +2000,8 @@ const sortImports = statements => {
   const imports = [];
 
   for (let i = 0; i < statements.length; i++) {
-    const stmt = statements[i];
-    if (stmt.type !== "ImportDeclaration") break;
-    imports.push(stmt);
+    if (!isImport(statements[i])) break;
+    imports.push(statements[i]);
   }
 
   return imports
