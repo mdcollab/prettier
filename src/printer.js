@@ -2007,12 +2007,19 @@ const sortImports = statements => {
   return imports
     .map((imp, i) => [imp, i])
     .sort(([imp1, i1], [imp2, i2]) => getImportSortNumber(imp1, i1) - getImportSortNumber(imp2, i2))
-    .map(([imp, i]) => imp)
-    .concat(statements.slice(imports.length));
+    .map(([imp, i]) => imp);
 };
 
 function printStatementSequence(path, options, print) {
   let printed = [];
+  const statements = path.stack[path.stack.length - 1];
+  const imports = sortImports(statements);
+  let i = 0;
+  while (imports[i] && isExternalImport(imports[i])) i++;
+  const lastExternalImport = imports[i - 1];
+  const lastImport = imports[imports.length - 1];
+
+  path.stack[path.stack.length - 1] = imports.concat(statements.slice(imports.length));
 
   path.map(stmtPath => {
     var stmt = stmtPath.getValue();
@@ -2035,12 +2042,21 @@ function printStatementSequence(path, options, print) {
 
     parts.push(stmtPrinted);
 
-    if (util.isNextLineEmpty(text, stmt) && !isLastStatement(stmtPath)) {
+    if (util.isNextLineEmpty(text, stmt) && !isLastStatement(stmtPath) && !isImport(stmt)) {
       parts.push(hardline);
+    }
 
-      if (stmt.type === "ImportDeclaration" && text.slice(util.locEnd(stmt)).search(/\bimport\b/) === -1) {
-        parts.push(hardline);
-      }
+    if (
+      isImport(stmt) &&
+      lastExternalImport &&
+      stmt.start === lastExternalImport.start &&
+      stmt.start !== lastImport.start
+    ) {
+      parts.push(hardline);
+    }
+
+    if (isImport(stmt) && stmt.start === lastImport.start) {
+      parts.push(hardline, hardline);
     }
 
     printed.push(concat(parts));
