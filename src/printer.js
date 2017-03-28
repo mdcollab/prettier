@@ -2760,7 +2760,7 @@ function printMemberChain(path, options, print) {
     group1[0] &&
     group1[0].node &&
     group1[0].node.property &&
-    group1[0].node.property.name === "then";
+    (group1[0].node.property.name === "then" || group1[0].node.property.name === "tee");
 
   // If we only have a single `.`, we shouldn't do anything fancy and just
   // render everything concatenated together.
