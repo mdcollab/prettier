@@ -574,6 +574,7 @@ function genericPrintNoParens(path, options, print, args) {
       // a => a ? a : a
       // a <= a ? a : a
       const shouldAddParens =
+        false &&
         n.body.type === "ConditionalExpression" &&
         !util.startsWithNoLookaheadToken(
           n.body,
