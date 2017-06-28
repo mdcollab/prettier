@@ -8,7 +8,6 @@ const printDocToString = require("./src/doc-printer").printDocToString;
 const normalizeOptions = require("./src/options").normalize;
 const parser = require("./src/parser");
 const printDocToDebug = require("./src/doc-debug").printDocToDebug;
-const util = require("./src/util");
 
 function guessLineEnding(text) {
   const index = text.indexOf("\n");
