@@ -3,17 +3,21 @@
 "use strict";
 
 const fs = require("fs");
-const getStdin = require("get-stdin");
+const path = require("path");
+const getStream = require("get-stream");
 const glob = require("glob");
 const chalk = require("chalk");
 const minimist = require("minimist");
 const readline = require("readline");
-const prettier = require("../index");
+const prettier = eval("require")("../index");
+const cleanAST = require("../src/clean-ast.js").cleanAST;
 
 const argv = minimist(process.argv.slice(2), {
   boolean: [
     "write",
     "stdin",
+    "use-tabs",
+    "semi",
     "single-quote",
     "bracket-spacing",
     "jsx-bracket-same-line",
@@ -27,11 +31,26 @@ const argv = minimist(process.argv.slice(2), {
     "version",
     "debug-print-doc",
     "debug-check",
+    "with-node-modules",
     // Deprecated in 0.0.10
     "flow-parser"
   ],
-  string: ["print-width", "tab-width", "parser", "trailing-comma"],
-  default: { color: true, "bracket-spacing": true, parser: "babylon" },
+  string: [
+    "print-width",
+    "tab-width",
+    "parser",
+    "trailing-comma",
+    "cursor-offset",
+    "range-start",
+    "range-end",
+    "stdin-filepath"
+  ],
+  default: {
+    semi: true,
+    color: true,
+    "bracket-spacing": true,
+    parser: "babylon"
+  },
   alias: { help: "h", version: "v", "list-different": "l" },
   unknown: param => {
     if (param.startsWith("-")) {
@@ -49,6 +68,16 @@ if (argv["version"]) {
 const filepatterns = argv["_"];
 const write = argv["write"];
 const stdin = argv["stdin"] || (!filepatterns.length && !process.stdin.isTTY);
+const ignoreNodeModules = argv["with-node-modules"] === false;
+const globOptions = {
+  ignore: ignoreNodeModules && ["**/node_modules/**", "./node_modules/**"],
+  dot: true
+};
+
+if (write && argv["debug-check"]) {
+  console.error("Cannot use --write and --debug-check together.");
+  process.exit(1);
+}
 
 function getParserOption() {
   const optionName = "parser";
@@ -64,19 +93,7 @@ function getParserOption() {
     return "flow";
   }
 
-  if (value === "flow" || value === "babylon") {
-    return value;
-  }
-
-  console.warn(
-    "Ignoring unknown --" +
-      optionName +
-      ' value, falling back to "babylon":\n' +
-      '  Expected "flow" or "babylon", but received: ' +
-      JSON.stringify(value)
-  );
-
-  return "babylon";
+  return value;
 }
 
 function getIntOption(optionName) {
@@ -109,6 +126,7 @@ function getTrailingComma() {
         "Warning: `--trailing-comma` was used without an argument. This is deprecated. " +
           'Specify "none", "es5", or "all".'
       );
+      return "es5";
     case "es5":
       return "es5";
     case "all":
@@ -119,34 +137,57 @@ function getTrailingComma() {
 }
 
 const options = {
+  cursorOffset: getIntOption("cursor-offset"),
+  rangeStart: getIntOption("range-start"),
+  rangeEnd: getIntOption("range-end"),
+  useTabs: argv["use-tabs"],
+  semi: argv["semi"],
   printWidth: getIntOption("print-width"),
   tabWidth: getIntOption("tab-width"),
   bracketSpacing: argv["bracket-spacing"],
   singleQuote: argv["single-quote"],
   jsxBracketSameLine: argv["jsx-bracket-same-line"],
+  filepath: argv["stdin-filepath"],
   trailingComma: getTrailingComma(),
   parser: getParserOption()
 };
 
-function format(input) {
+function format(input, opt) {
   if (argv["debug-print-doc"]) {
-    const doc = prettier.__debug.printToDoc(input, options);
+    const doc = prettier.__debug.printToDoc(input, opt);
     return prettier.__debug.formatDoc(doc);
   }
 
   if (argv["debug-check"]) {
-    const pp = prettier.format(input, options);
-    const pppp = prettier.format(pp, options);
-    if (pp !== pppp) {
-      const diff = require(
-        "diff"
-      ).createTwoFilesPatch("", "", pp, pppp, "", "", { context: 2 });
-      console.error(diff);
+    function diff(a, b) {
+      return require("diff").createTwoFilesPatch("", "", a, b, "", "", {
+        context: 2
+      });
     }
-    return;
+
+    const pp = prettier.format(input, opt);
+    const pppp = prettier.format(pp, opt);
+    if (pp !== pppp) {
+      throw "prettier(input) !== prettier(prettier(input))\n" + diff(pp, pppp);
+    } else {
+      const ast = cleanAST(prettier.__debug.parse(input, opt));
+      const past = cleanAST(prettier.__debug.parse(pp, opt));
+
+      if (ast !== past) {
+        const MAX_AST_SIZE = 2097152; // 2MB
+        const astDiff = ast.length > MAX_AST_SIZE || past.length > MAX_AST_SIZE
+          ? "AST diff too large to render"
+          : diff(ast, past);
+        throw "ast(input) !== ast(prettier(input))\n" +
+          astDiff +
+          "\n" +
+          diff(input, pp);
+      }
+    }
+    return { formatted: opt.filepath || "(stdin)\n" };
   }
 
-  return prettier.format(input, options);
+  return prettier.formatWithCursor(input, opt);
 }
 
 function handleError(filename, e) {
@@ -166,7 +207,7 @@ function handleError(filename, e) {
     // If validation fails for one file, it will fail for all of them.
     process.exit(1);
   } else {
-    console.error(filename + ":", e);
+    console.error(filename + ":", e.stack || e);
   }
 
   // Don't exit the process if one file failed
@@ -178,31 +219,42 @@ if (argv["help"] || (!filepatterns.length && !stdin)) {
     "Usage: prettier [opts] [filename ...]\n\n" +
       "Available options:\n" +
       "  --write                  Edit the file in-place. (Beware!)\n" +
-      "  --list-different or -l   Print filenames of files that are different from prettier formatting\n" +
+      "  --list-different or -l   Print filenames of files that are different from Prettier formatting.\n" +
       "  --stdin                  Read input from stdin.\n" +
+      "  --stdin-filepath         Path to the file used to read from stdin.\n" +
       "  --print-width <int>      Specify the length of line that the printer will wrap on. Defaults to 80.\n" +
       "  --tab-width <int>        Specify the number of spaces per indentation-level. Defaults to 2.\n" +
-      "  --single-quote           Use single quotes instead of double.\n" +
-      "  --bracket-spacing        Put spaces between brackets. Defaults to true.\n" +
-      "  --jsx-bracket-same-line  Put > on the last line. Defaults to false.\n" +
+      "  --use-tabs               Indent lines with tabs instead of spaces.\n" +
+      "  --no-semi                Do not print semicolons, except at the beginning of lines which may need them.\n" +
+      "  --single-quote           Use single quotes instead of double quotes.\n" +
+      "  --no-bracket-spacing     Do not print spaces between brackets.\n" +
+      "  --jsx-bracket-same-line  Put > on the last line instead of at a new line.\n" +
       "  --trailing-comma <none|es5|all>\n" +
       "                           Print trailing commas wherever possible. Defaults to none.\n" +
-      "  --parser <flow|babylon>  Specify which parse to use. Defaults to babylon.\n" +
-      "  --color                  Colorize error messages. Defaults to true.\n" +
-      "  --version or -v          Print prettier version.\n" +
-      "\n" +
-      "Boolean options can be turned off like this:\n" +
-      "  --no-bracket-spacing\n" +
-      "  --bracket-spacing=false"
+      "  --parser <flow|babylon|typescript|postcss|json>\n" +
+      "                           Specify which parse to use. Defaults to babylon.\n" +
+      "  --cursor-offset <int>    Print (to stderr) where a cursor at the given position would move to after formatting.\n" +
+      "                           This option cannot be used with --range-start and --range-end\n" +
+      "  --range-start <int>      Format code starting at a given character offset.\n" +
+      "                           The range will extend backwards to the start of the first line containing the selected statement.\n" +
+      "                           This option cannot be used with --cursor-offset.\n" +
+      "                           Defaults to 0.\n" +
+      "  --range-end <int>        Format code ending at a given character offset (exclusive).\n" +
+      "                           The range will extend forwards to the end of the selected statement.\n" +
+      "                           This option cannot be used with --cursor-offset.\n" +
+      "                           Defaults to Infinity.\n" +
+      "  --no-color               Do not colorize error messages.\n" +
+      "  --with-node-modules      Process files inside `node_modules` directory.\n" +
+      "  --version or -v          Print Prettier version.\n" +
+      "\n"
   );
   process.exit(argv["help"] ? 0 : 1);
 }
 
 if (stdin) {
-  getStdin().then(input => {
+  getStream(process.stdin).then(input => {
     try {
-      // Don't use `console.log` here since it adds an extra newline at the end.
-      process.stdout.write(format(input));
+      writeOutput(format(input, options));
     } catch (e) {
       handleError("stdin", e);
       return;
@@ -210,7 +262,7 @@ if (stdin) {
   });
 } else {
   eachFilename(filepatterns, filename => {
-    if (write || argv["debug-check"]) {
+    if (write) {
       // Don't use `console.log` here since we need to replace this line.
       process.stdout.write(filename);
     }
@@ -218,22 +270,41 @@ if (stdin) {
     let input;
     try {
       input = fs.readFileSync(filename, "utf8");
-    } catch(e) {
+    } catch (e) {
       // Add newline to split errors from filename line.
       process.stdout.write("\n");
 
-      console.error("Unable to read file: " + filename + "\n" + err);
+      console.error("Unable to read file: " + filename + "\n" + e);
       // Don't exit the process if one file failed
       process.exitCode = 2;
       return;
     }
 
+    if (argv["list-different"]) {
+      if (
+        !prettier.check(
+          input,
+          Object.assign({}, options, { filepath: filename })
+        )
+      ) {
+        if (!write) {
+          console.log(filename);
+        }
+        process.exitCode = 1;
+      }
+    }
+
     const start = Date.now();
 
+    let result;
     let output;
 
     try {
-      output = format(input);
+      result = format(
+        input,
+        Object.assign({}, options, { filepath: filename })
+      );
+      output = result.formatted;
     } catch (e) {
       // Add newline to split errors from filename line.
       process.stdout.write("\n");
@@ -250,38 +321,56 @@ if (stdin) {
       // Don't write the file if it won't change in order not to invalidate
       // mtime based caches.
       if (output === input) {
-        console.log(chalk.grey("%s %dms"), filename, Date.now() - start);
+        if (!argv["list-different"]) {
+          console.log(chalk.grey("%s %dms"), filename, Date.now() - start);
+        }
       } else {
-        console.log("%s %dms", filename, Date.now() - start);
+        if (argv["list-different"]) {
+          console.log(filename);
+        } else {
+          console.log("%s %dms", filename, Date.now() - start);
+        }
 
-        fs.writeFile(filename, output, "utf8", err => {
-          if (err) {
-            console.error("Unable to write file: " + filename + "\n" + err);
-            // Don't exit the process if one file failed
-            process.exitCode = 2;
-          }
-        });
+        try {
+          fs.writeFileSync(filename, output, "utf8");
+        } catch (err) {
+          console.error("Unable to write file: " + filename + "\n" + err);
+          // Don't exit the process if one file failed
+          process.exitCode = 2;
+        }
       }
     } else if (argv["debug-check"]) {
-      process.stdout.write("\n");
       if (output) {
         console.log(output);
+      } else {
+        process.exitCode = 2;
       }
-    } else if (argv["list-different"]) {
-      if (input !== output) {
-        console.log(filename);
-        process.exitCode = 1;
-      }
-    } else {
-      // Don't use `console.log` here since it adds an extra newline at the end.
-      process.stdout.write(output);
+    } else if (!argv["list-different"]) {
+      writeOutput(result);
     }
   });
 }
 
+function writeOutput(result) {
+  // Don't use `console.log` here since it adds an extra newline at the end.
+  process.stdout.write(result.formatted);
+
+  if (options.cursorOffset) {
+    process.stderr.write(result.cursorOffset + "\n");
+  }
+}
+
 function eachFilename(patterns, callback) {
   patterns.forEach(pattern => {
-    glob(pattern, (err, filenames) => {
+    if (!glob.hasMagic(pattern)) {
+      if (shouldIgnorePattern(pattern)) {
+        return;
+      }
+      callback(pattern);
+      return;
+    }
+
+    glob(pattern, globOptions, (err, filenames) => {
       if (err) {
         console.error("Unable to expand glob pattern: " + pattern + "\n" + err);
         // Don't exit the process if one pattern failed
@@ -294,4 +383,8 @@ function eachFilename(patterns, callback) {
       });
     });
   });
+}
+
+function shouldIgnorePattern(pattern) {
+  return ignoreNodeModules && path.resolve(pattern).includes("/node_modules/");
 }

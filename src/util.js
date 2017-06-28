@@ -1,61 +1,7 @@
 "use strict";
 
-var types = require("ast-types");
-var n = types.namedTypes;
-
-function comparePos(pos1, pos2) {
-  return pos1.line - pos2.line || pos1.column - pos2.column;
-}
-
-function expandLoc(parentNode, childNode) {
-  if (locStart(childNode) - locStart(parentNode) < 0) {
-    setLocStart(parentNode, locStart(childNode));
-  }
-
-  if (locEnd(parentNode) - locEnd(childNode) < 0) {
-    setLocEnd(parentNode, locEnd(childNode));
-  }
-}
-
-function fixFaultyLocations(node, text) {
-  if (node.decorators) {
-    // Expand the loc of the node responsible for printing the decorators
-    // (here, the decorated node) so that it includes node.decorators.
-    node.decorators.forEach(function(decorator) {
-      expandLoc(node, decorator);
-    });
-  } else if (node.declaration && isExportDeclaration(node)) {
-    // Expand the loc of the node responsible for printing the decorators
-    // (here, the export declaration) so that it includes node.decorators.
-    var decorators = node.declaration.decorators;
-    if (decorators) {
-      decorators.forEach(function(decorator) {
-        expandLoc(node, decorator);
-      });
-    }
-  } else if (
-    (n.MethodDefinition && n.MethodDefinition.check(node)) ||
-    (n.Property.check(node) && (node.method || node.shorthand))
-  ) {
-    if (n.FunctionExpression.check(node.value)) {
-      // FunctionExpression method values should be anonymous,
-      // because their .id fields are ignored anyway.
-      node.value.id = null;
-    }
-  } else if (node.type === "ObjectTypeProperty") {
-    var end = skipSpaces(text, locEnd(node), true);
-    if (end !== false && text.charAt(end) === ",") {
-      // Some parsers accidentally include trailing commas in the
-      // end information for ObjectTypeProperty nodes.
-      if ((end = skipSpaces(text, end - 1, true)) !== false) {
-        setLocEnd(node, end);
-      }
-    }
-  }
-}
-
 function isExportDeclaration(node) {
-  if (node)
+  if (node) {
     switch (node.type) {
       case "ExportDeclaration":
       case "ExportDefaultDeclaration":
@@ -65,12 +11,13 @@ function isExportDeclaration(node) {
       case "ExportAllDeclaration":
         return true;
     }
+  }
 
   return false;
 }
 
 function getParentExportDeclaration(path) {
-  var parentNode = path.getParentNode();
+  const parentNode = path.getParentNode();
   if (path.getName() === "declaration" && isExportDeclaration(parentNode)) {
     return parentNode;
   }
@@ -139,7 +86,7 @@ function skipInlineComment(text, index) {
   }
 
   if (text.charAt(index) === "/" && text.charAt(index + 1) === "*") {
-    for (var i = index + 2; i < text.length; ++i) {
+    for (let i = index + 2; i < text.length; ++i) {
       if (text.charAt(i) === "*" && text.charAt(i + 1) === "/") {
         return i + 2;
       }
@@ -166,19 +113,32 @@ function skipNewline(text, index, opts) {
   const backwards = opts && opts.backwards;
   if (index === false) {
     return false;
-  } else if (backwards) {
-    if (text.charAt(index) === "\n") {
-      return index - 1;
-    }
-    if (text.charAt(index - 1) === "\r" && text.charAt(index) === "\n") {
+  }
+
+  const atIndex = text.charAt(index);
+  if (backwards) {
+    if (text.charAt(index - 1) === "\r" && atIndex === "\n") {
       return index - 2;
     }
-  } else {
-    if (text.charAt(index) === "\n") {
-      return index + 1;
+    if (
+      atIndex === "\n" ||
+      atIndex === "\r" ||
+      atIndex === "\u2028" ||
+      atIndex === "\u2029"
+    ) {
+      return index - 1;
     }
-    if (text.charAt(index) === "\r" && text.charAt(index + 1) === "\n") {
+  } else {
+    if (atIndex === "\r" && text.charAt(index + 1) === "\n") {
       return index + 2;
+    }
+    if (
+      atIndex === "\n" ||
+      atIndex === "\r" ||
+      atIndex === "\u2028" ||
+      atIndex === "\u2029"
+    ) {
+      return index + 1;
     }
   }
 
@@ -193,7 +153,7 @@ function hasNewline(text, index, opts) {
 }
 
 function hasNewlineInRange(text, start, end) {
-  for (var i = start; i < end; ++i) {
+  for (let i = start; i < end; ++i) {
     if (text.charAt(i) === "\n") {
       return true;
     }
@@ -214,16 +174,29 @@ function isPreviousLineEmpty(text, node) {
 function isNextLineEmpty(text, node) {
   let oldIdx = null;
   let idx = locEnd(node);
-  idx = skipToLineEnd(text, idx);
   while (idx !== oldIdx) {
     // We need to skip all the potential trailing inline comments
     oldIdx = idx;
+    idx = skipToLineEnd(text, idx);
     idx = skipInlineComment(text, idx);
     idx = skipSpaces(text, idx);
   }
   idx = skipTrailingComment(text, idx);
   idx = skipNewline(text, idx);
   return hasNewline(text, idx);
+}
+
+function getNextNonSpaceNonCommentCharacter(text, node) {
+  let oldIdx = null;
+  let idx = locEnd(node);
+  while (idx !== oldIdx) {
+    oldIdx = idx;
+    idx = skipSpaces(text, idx);
+    idx = skipInlineComment(text, idx);
+    idx = skipTrailingComment(text, idx);
+    idx = skipNewline(text, idx);
+  }
+  return text.charAt(idx);
 }
 
 function hasSpaces(text, index, opts) {
@@ -233,17 +206,74 @@ function hasSpaces(text, index, opts) {
 }
 
 function locStart(node) {
+  // Handle nodes with decorators. They should start at the first decorator
+  if (
+    node.declaration &&
+    node.declaration.decorators &&
+    node.declaration.decorators.length > 0
+  ) {
+    return locStart(node.declaration.decorators[0]);
+  }
+  if (node.decorators && node.decorators.length > 0) {
+    return locStart(node.decorators[0]);
+  }
+
+  if (node.__location) {
+    return node.__location.startOffset;
+  }
   if (node.range) {
     return node.range[0];
   }
-  return node.start;
+  if (typeof node.start === "number") {
+    return node.start;
+  }
+  if (node.source) {
+    return lineColumnToIndex(node.source.start, node.source.input.css) - 1;
+  }
+  if (node.loc) {
+    return node.loc.start;
+  }
 }
 
 function locEnd(node) {
-  if (node.range) {
-    return node.range[1];
+  const endNode = node.nodes && getLast(node.nodes);
+  if (endNode && node.source && !node.source.end) {
+    node = endNode;
   }
-  return node.end;
+
+  let loc;
+  if (node.range) {
+    loc = node.range[1];
+  } else if (typeof node.end === "number") {
+    loc = node.end;
+  } else if (node.source) {
+    loc = lineColumnToIndex(node.source.end, node.source.input.css);
+  }
+
+  if (node.__location) {
+    return node.__location.endOffset;
+  }
+  if (node.typeAnnotation) {
+    return Math.max(loc, locEnd(node.typeAnnotation));
+  }
+
+  if (node.loc && !loc) {
+    return node.loc.end;
+  }
+
+  return loc;
+}
+
+// Super inefficient, needs to be cached.
+function lineColumnToIndex(lineColumn, text) {
+  let index = 0;
+  for (let i = 0; i < lineColumn.line - 1; ++i) {
+    index = text.indexOf("\n", index) + 1;
+    if (index === -1) {
+      return -1;
+    }
+  }
+  return index + lineColumn.column;
 }
 
 function setLocStart(node, index) {
@@ -262,27 +292,7 @@ function setLocEnd(node, index) {
   }
 }
 
-// http://stackoverflow.com/a/7124052
-function htmlEscapeInsideDoubleQuote(str) {
-  return str.replace(/&/g, "&amp;").replace(/"/g, "&quot;");
-  // Intentionally disable the following since it is safe inside of a
-  // double quote context
-  //    .replace(/'/g, '&#39;')
-  //    .replace(/</g, '&lt;')
-  //    .replace(/>/g, '&gt;');
-}
-
-// http://stackoverflow.com/a/7124052
-function htmlEscapeInsideAngleBracket(str) {
-  return str.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-  // Intentionally disable the following since it is safe inside of a
-  // angle bracket context
-  //    .replace(/&/g, '&amp;')
-  //    .replace(/"/g, '&quot;')
-  //    .replace(/'/g, '&#39;')
-}
-
-var PRECEDENCE = {};
+const PRECEDENCE = {};
 [
   ["||"],
   ["&&"],
@@ -295,8 +305,8 @@ var PRECEDENCE = {};
   ["+", "-"],
   ["*", "/", "%"],
   ["**"]
-].forEach(function(tier, i) {
-  tier.forEach(function(op) {
+].forEach((tier, i) => {
+  tier.forEach(op => {
     PRECEDENCE[op] = i;
   });
 });
@@ -309,15 +319,102 @@ function isFlowFileMarker(comment) {
   return comment.value.search(/^[ ]?@flow[ ]?$/) !== -1;
 }
 
+// Tests if an expression starts with `{`, or (if forbidFunctionAndClass holds) `function` or `class`.
+// Will be overzealous if there's already necessary grouping parentheses.
+function startsWithNoLookaheadToken(node, forbidFunctionAndClass) {
+  node = getLeftMost(node);
+  switch (node.type) {
+    // Hack. Remove after https://github.com/eslint/typescript-eslint-parser/issues/331
+    case "ObjectPattern":
+      return !forbidFunctionAndClass;
+    case "FunctionExpression":
+    case "ClassExpression":
+      return forbidFunctionAndClass;
+    case "ObjectExpression":
+      return true;
+    case "MemberExpression":
+      return startsWithNoLookaheadToken(node.object, forbidFunctionAndClass);
+    case "TaggedTemplateExpression":
+      if (node.tag.type === "FunctionExpression") {
+        // IIFEs are always already parenthesized
+        return false;
+      }
+      return startsWithNoLookaheadToken(node.tag, forbidFunctionAndClass);
+    case "CallExpression":
+      if (node.callee.type === "FunctionExpression") {
+        // IIFEs are always already parenthesized
+        return false;
+      }
+      return startsWithNoLookaheadToken(node.callee, forbidFunctionAndClass);
+    case "ConditionalExpression":
+      return startsWithNoLookaheadToken(node.test, forbidFunctionAndClass);
+    case "UpdateExpression":
+      return (
+        !node.prefix &&
+        startsWithNoLookaheadToken(node.argument, forbidFunctionAndClass)
+      );
+    case "BindExpression":
+      return (
+        node.object &&
+        startsWithNoLookaheadToken(node.object, forbidFunctionAndClass)
+      );
+    case "SequenceExpression":
+      return startsWithNoLookaheadToken(
+        node.expressions[0],
+        forbidFunctionAndClass
+      );
+    case "TSAsExpression":
+      return startsWithNoLookaheadToken(
+        node.expression,
+        forbidFunctionAndClass
+      );
+    default:
+      return false;
+  }
+}
+
+function getLeftMost(node) {
+  if (node.left) {
+    return getLeftMost(node.left);
+  }
+  return node;
+}
+
+function hasBlockComments(node) {
+  return node.comments && node.comments.some(isBlockComment);
+}
+
+function isBlockComment(comment) {
+  return comment.type === "Block" || comment.type === "CommentBlock";
+}
+
+function getAlignmentSize(value, tabWidth, startIndex) {
+  startIndex = startIndex || 0;
+
+  let size = 0;
+  for (let i = startIndex; i < value.length; ++i) {
+    if (value[i] === "\t") {
+      // Tabs behave in a way that they are aligned to the nearest
+      // multiple of tabWidth:
+      // 0 -> 4, 1 -> 4, 2 -> 4, 3 -> 4
+      // 4 -> 8, 5 -> 8, 6 -> 8, 7 -> 8 ...
+      size = size + tabWidth - size % tabWidth;
+    } else {
+      size++;
+    }
+  }
+
+  return size;
+}
+
 module.exports = {
-  comparePos,
   getPrecedence,
   isFlowFileMarker,
-  fixFaultyLocations,
   isExportDeclaration,
   getParentExportDeclaration,
   getPenultimate,
   getLast,
+  getNextNonSpaceNonCommentCharacter,
   skipWhitespace,
   skipSpaces,
   skipNewline,
@@ -330,6 +427,8 @@ module.exports = {
   locEnd,
   setLocStart,
   setLocEnd,
-  htmlEscapeInsideDoubleQuote,
-  htmlEscapeInsideAngleBracket
+  startsWithNoLookaheadToken,
+  hasBlockComments,
+  isBlockComment,
+  getAlignmentSize
 };

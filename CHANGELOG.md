@@ -1,3 +1,177 @@
+# 1.5.1
+
+[link](https://github.com/jlongster/prettier/compare/1.5.0...1.5.1)
+
+* Go back to babylon beta 13 (#2289)
+* Inline import('x') to avoid having trailing comma (#2288)
+
+# 1.5.0
+
+[link](https://github.com/jlongster/prettier/compare/1.4.4...1.5.0)
+
+* [Release Notes](https://github.com/prettier/prettier/releases/tag/1.5.0)
+
+# 1.4.4
+
+* Fix postcss, I forgot to re-run the build script :(
+
+# 1.4.3
+
+[link](https://github.com/jlongster/prettier/compare/1.4.2...1.4.3)
+
+* Fix support for node 4 (#1988)
+* Fix website on iOS Safari (#1970)
+
+Formatting change:
+* Position JSX whitespace (`{" "}`) at the end of lines (#1964)
+
+Lots of small fixes, mainly for TypeScript.
+
+# 1.4.2
+
+[link](https://github.com/jlongster/prettier/compare/1.4.1...1.4.2)
+
+* fix(decorators): do not inline methods with decorators with babylon (#1934)
+* fix(typescript): print semi with inline interfaces/types (#1936)
+* fix(typescript): no semi after export default abstract class, fixes (#1937)
+* TypeScript: fix trailing comma in enum (#1938)
+
+# 1.4.1
+
+[link](https://github.com/jlongster/prettier/compare/1.4.0...1.4.1)
+
+* Lots of fixes for TypeScript and regressions from 1.4.0. If you are using 1.4.0, you should migrate to 1.4.1 asap ;)
+
+# 1.4.0
+
+[link](https://github.com/jlongster/prettier/compare/1.3.1...1.4.0)
+
+* [Release Notes](https://github.com/prettier/prettier/releases/tag/1.4.0)
+
+# 1.3.1
+
+* Respect template inline-ness (#1497)
+
+# 1.3.0
+
+[link](https://github.com/jlongster/prettier/compare/1.2.2...1.3.0)
+
+* add printer branches for some TypeScript nodes (#1331) 	
+* Skip trailing commas with FlowShorthandWithOneArg (#1364)
+* add TSLastTypeNode and TSIndexedAccessType (#1370)
+* add TSConstructorType (#1367) 	
+* fix do-while break (#1373) 	
+* Fix missing trailing commas on flow generics (#1381)
+* Add example of using yarn test with arguments (#1383) 	
+* Have --debug-check also run ast verification (#1337)
+* Fix empty line in block with EmptyStatement (#1375) 	
+* parent decides how to print type annotations (#1391)
+* add TSTypeOperator (#1396)
+* fix TSTypeReference not printing typeArguments (#1392)
+* add TSMappedType and TSTypeParameter (#1393) 	
+* fix TSFunctionType failing on TypeParameters (#1394)
+* add TSIntersectionType (#1395) 	
+* fix typeParameters printing TSFunctionType w/o breaking flow (#1397)
+* Fix optional flow parenthesis (#1357) 	
+* [experimental] Add linting step in test pipeline (#1172) 	
+* fix VariableDeclarator not printing type parameters (#1415)
+* add TSMethodSignature (#1416)
+* Add TSParameterProperty, TSAbstractClassDeclaration and TSAbstractMethodDefinition (#1410)
+* Inline nullable in flow generics (#1426)
+* fixed method 'check' error 'format' of undefined (#1424) 	
+* feat(typescript): add delcare modifier support for vars, classes and functions (#1436)
+* Allow flow declarations to break on StringLiteralTypeAnnotations (#1437) 	
+* Require '::a.b' to have a preceding ; in no-semi style (#1442)
+* Require '(a || b).c++' to have a preceding ; in no-semi style (#1443)
+* Upgrade flow parser to 0.45 (#1447) 	
+* Add supertype tests and add TSAbstractClassProperty (#1467) 	
+* Break class expression returned by arrow call (#1464)
+* update typescript snapshots to account for #1464 (#1470)
+* [WIP] add TSNamespaceExportDeclaration (#1459) 	
+* update yarn.lock (#1471) 	
+* [RFC] Do not indent calls with a single template literal argument (#873) 	
+* Proper indentation for template literals (#1385) 	
+* Add parenthesis for unusual nested ternaries (#1386) 	
+* Preserve inline comment as last argument (#1390) 	
+* Only add parenthesis on ternaries inside of arrow functions if doesn't break (#1450)
+* Fix windows line ending on template literals (#1439) 	
+* Add space around `=` for flow generics default arguments (#1476) 	
+* Don't break for unparenthesised single argument flow function (#1452) 	
+* Don't break on empty arrays and objects (#1440) 	
+* Do not break on [0] (#1441) 	
+* Reorder flow object props (#1451) 	
+* Break inline object first in function arguments (#1453) 	
+* Break inline object first in function arguments (#1453) (#1173) 	
+* Inline template literals as arrow body (#1485)
+
+# 1.2.2
+
+[link](https://github.com/jlongster/prettier/compare/1.2.1...1.2.2)
+
+* Only break for conditionals (#1350)
+
+# 1.2.1
+
+[link](https://github.com/jlongster/prettier/compare/1.2.0...1.2.1)
+
+* Fix duplicate comments in classes (#1349)
+
+# 1.2.0
+
+[link](https://github.com/jlongster/prettier/compare/1.1.0...1.2.0)
+
+* match jsx files in pre-commit hook (#1276)
+* Fix isPreviousLineEmpty on Windows (#1263)
+* Add --dev option to suggested install cmd (#1289)
+* Write out change CLI changes synchronously. Fixes #1287. (#1292)
+* Remove emoji part from lint-staged's name (#1302)
+* omit 'doc' key from options object before passing it to format() (#1299)
+* Skip globbing filenames with node-glob when the filename is not a glob (#1307)
+* FIX: more documentation for jetbrains (#1265)
+* Fix template literal comments (#1296)
+* Double quotes for option values in Readme file (#1314)
+* Do not print the sub-tree when using prettier-ignore (#1286)
+* Bail when traversing === groups (#1294)
+* Avoid breaking arguments for last arg expansion (#1305)
+* Add typescript as a valid parser value (#1318)
+* Add jestbrains filewatcher docs (#1310)
+* Add prettier_d to Related Projects (#1328)
+* Add parentheses for assignment as body of arrow (#1326)
+* Add information about Vim's other autocmd events (#1333)
+* add printer branch for TSFirstTypeNode (#1332)
+* Optimize `prettier --help` for humans (#1340)
+* Update link to @vjeux's React London presentation (#1330)
+* Improve regex printing (#1341)
+* Fix arrow function parenthesis with comments in flow (#1339)
+* Break if () if conditional inside breaks (#1344)
+* Don't inline paren at right of arguments (#1345)
+
+# 1.1.0
+
+[link](https://github.com/jlongster/prettier/compare/1.0.0...1.1.0)
+
+* Prettier 1.0 is the stabler release we've been waiting for (#1242)
+* fix small typo (#1255)
+* Fix : ReferenceError: err is not defined (#1254)
+* Document debugging strategies (#1253)
+* Do not inline member expressions as part of assignments (#1256)
+* Fix flow union params (#1251)
+* Use a whitelist instead of blacklist for member breaking (#1261)
+* Remove trailing whitespace (#1259)
+* Get rid of fixFaultyLocations code (#1252)
+* Fixing n.comments check in printer (#1239)
+* [WIP] no-semi comments (#1257)
+
+# 1.0.1
+
+* change semi default
+
+# 1.0.0
+
+[link](https://github.com/jlongster/prettier/compare/0.22.0...1.0.0)
+
+* See announcement blog post: [http://jlongster.com/prettier-1.0](http://jlongster.com/prettier-1.0)
+
 # 0.22.0
 
 [link](https://github.com/jlongster/prettier/compare/0.21.0...0.22.0)
@@ -40,10 +214,10 @@
 * [JSX] Break before and after jsx whitespace (#836)
 * re-run snapshot tests
 * Run prettier 0.20.0 (#835)
-* [JSX] Don't wrap JSX Elements in parentheses in {} (#845) 
+* [JSX] Don't wrap JSX Elements in parentheses in {} (#845)
 * Fix comment after the last argument of a function (#856)
 * Fix travis build imag
-* Do not break require calls (#841) 
+* Do not break require calls (#841)
 * Stabilize import as comments (#855)
 * Fix jsx expression comment that break (#852)
 * Inline last arg function arguments (#847)
@@ -60,22 +234,22 @@
 
 [link](https://github.com/jlongster/prettier/compare/0.19.0...0.20.0)
 
-* Fix extra parens for update expressions (#796)    
-* Fix empty options (#803)    
-* Eagerly evaluate `ifBreak` when processing template literals (fixes #795    
-* Fix function declaration params comments (#802)   
-* Update flow to 0.40 (#808)    
-* Correct link for travis   
-* Fix function call args (#809)   
-* Properly support `do` (#811)    
-* Do not put parenthesis around not named default export (#819)   
-* Adds another preset to related projects (#820)    
-* Fix trailing commas in docs (#825)    
-* Put short body of arrow functions on the same line (#829)   
-* Preserve new lines for comments after `=` (#830)    
-* Fix indentation of a merged group (#828)    
-* Migrate class comments to the beginning (#831)    
-* Update list of related projects (#833)    
+* Fix extra parens for update expressions (#796)
+* Fix empty options (#803)
+* Eagerly evaluate `ifBreak` when processing template literals (fixes #795
+* Fix function declaration params comments (#802)
+* Update flow to 0.40 (#808)
+* Correct link for travis
+* Fix function call args (#809)
+* Properly support `do` (#811)
+* Do not put parenthesis around not named default export (#819)
+* Adds another preset to related projects (#820)
+* Fix trailing commas in docs (#825)
+* Put short body of arrow functions on the same line (#829)
+* Preserve new lines for comments after `=` (#830)
+* Fix indentation of a merged group (#828)
+* Migrate class comments to the beginning (#831)
+* Update list of related projects (#833)
 * Allow breaking for logical expressions in member chains (#827)
 
 # 0.19.0

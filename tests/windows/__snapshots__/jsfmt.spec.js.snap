@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`line-ending.js 1`] = `
-"this;
+this;
 has;
 windows;
 line;
@@ -12,20 +12,24 @@ has;
 windows;
 line;
 endings;
-"
+
 `;
 
-exports[`line-ending.js 2`] = `
-"this;
-has;
-windows;
-line;
-endings;
+exports[`template.js 1`] = `
+const aLongString = \`
+Line 1
+Line 2
+Line 3
+Line 4
+Line 5
+\`;
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-this;
-has;
-windows;
-line;
-endings;
-"
+const aLongString = \`
+Line 1
+Line 2
+Line 3
+Line 4
+Line 5
+\`;
+
 `;

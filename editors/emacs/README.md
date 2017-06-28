@@ -1,8 +1,3 @@
-Add this to your init:
+This package has been moved to https://github.com/prettier/prettier-emacs.
 
-```elisp
-(require 'prettier-js)
-(add-hook 'js-mode-hook
-          (lambda ()
-            (add-hook 'before-save-hook 'prettier-before-save)))
-```
+Please, update your configuration to use the new location.

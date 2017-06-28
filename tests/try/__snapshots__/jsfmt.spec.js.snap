@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`empty.js 1`] = `
-"try {
+try {
 } catch (e) {
 }
 finally {
@@ -18,32 +18,11 @@ try {
 
 try {
 } catch (e) {}
-"
-`;
 
-exports[`empty.js 2`] = `
-"try {
-} catch (e) {
-}
-finally {
-}
-
-try {
-} catch (e) {
-}
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-try {
-} catch (e) {
-} finally {
-}
-
-try {
-} catch (e) {}
-"
 `;
 
 exports[`try.js 1`] = `
-"try
+try
 /* missing comment */
 {;}
 finally {}
@@ -52,18 +31,5 @@ try {
   /* missing comment */
 } finally {
 }
-"
-`;
 
-exports[`try.js 2`] = `
-"try
-/* missing comment */
-{;}
-finally {}
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-try {
-  /* missing comment */
-} finally {
-}
-"
 `;

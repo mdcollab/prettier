@@ -2,9 +2,9 @@
 
 function flattenDoc(doc) {
   if (doc.type === "concat") {
-    var res = [];
+    const res = [];
 
-    for (var i = 0; i < doc.parts.length; ++i) {
+    for (let i = 0; i < doc.parts.length; ++i) {
       const doc2 = doc.parts[i];
       if (typeof doc2 !== "string" && doc2.type === "concat") {
         [].push.apply(res, flattenDoc(doc2).parts);
@@ -35,9 +35,8 @@ function flattenDoc(doc) {
     });
   } else if (doc.contents) {
     return Object.assign({}, doc, { contents: flattenDoc(doc.contents) });
-  } else {
-    return doc;
   }
+  return doc;
 }
 
 function printDoc(doc) {
@@ -67,32 +66,50 @@ function printDoc(doc) {
   }
 
   if (doc.type === "indent") {
-    return "indent(" + doc.n + ", " + printDoc(doc.contents) + ")";
+    return "indent(" + printDoc(doc.contents) + ")";
+  }
+
+  if (doc.type === "align") {
+    return "align(" + doc.n + ", " + printDoc(doc.contents) + ")";
   }
 
   if (doc.type === "if-break") {
-    return "ifBreak(" +
+    return (
+      "ifBreak(" +
       printDoc(doc.breakContents) +
       (doc.flatContents ? ", " + printDoc(doc.flatContents) : "") +
-      ")";
+      ")"
+    );
   }
 
   if (doc.type === "group") {
     if (doc.expandedStates) {
-      return "conditionalGroup(" +
+      return (
+        "conditionalGroup(" +
         "[" +
         doc.expandedStates.map(printDoc).join(",") +
-        "])";
+        "])"
+      );
     }
 
-    return (doc.break ? "wrappedGroup" : "group") +
+    return (
+      (doc.break ? "wrappedGroup" : "group") +
       "(" +
       printDoc(doc.contents) +
-      ")";
+      ")"
+    );
+  }
+
+  if (doc.type === "fill") {
+    return "fill" + "(" + doc.parts.map(printDoc).join(", ") + ")";
   }
 
   if (doc.type === "line-suffix") {
     return "lineSuffix(" + printDoc(doc.contents) + ")";
+  }
+
+  if (doc.type === "line-suffix-boundary") {
+    return "lineSuffixBoundary";
   }
 
   throw new Error("Unknown doc type " + doc.type);
