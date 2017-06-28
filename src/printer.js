@@ -30,13 +30,13 @@ const isLineNext = docUtils.isLineNext;
 const isEmpty = docUtils.isEmpty;
 const rawText = docUtils.rawText;
 
-var isActionProperty = obj =>
+const isActionProperty = obj =>
   obj.type === "ObjectProperty" &&
   obj.key.name === "type" &&
   obj.value.name &&
   obj.value.name.search(/^[A-Z_]+$/) !== -1;
 
-var isAction = path => path
+const isAction = path => path
   .map(childPath => childPath.getValue(), "properties")
   .some(isActionProperty);
 
@@ -1005,7 +1005,7 @@ function genericPrintNoParens(path, options, print, args) {
         propertiesField = "properties";
       }
 
-      var dontBreak = n.type === "ObjectPattern" ||
+      const dontBreak = n.type === "ObjectPattern" ||
         isAction(path) ||
         (parent.type === "CallExpression" && parent.callee.name === "dispatch");
 
