@@ -46,7 +46,7 @@ const propNames1 = [
   "onLayout",
   "children",
   "dispatch",
-  "navigator",
+  "navigation",
   "style",
   "textStyle",
 ];
@@ -553,6 +553,7 @@ function genericPrintNoParens(path, options, print, args) {
       if (
         !hasLeadingOwnLineComment(options.originalText, n.body) &&
         (n.body.type === "ArrayExpression" ||
+          parent.type === "CallExpression" ||
           (n.body.type === "ObjectExpression" && !n.body.properties.some(isActionProperty)) ||
           (n.body.type === "JSXElement" && parent.type !== "VariableDeclarator") ||
           (n.body.type === "CallExpression" && parent.type === "JSXExpressionContainer") ||
@@ -1042,7 +1043,7 @@ function genericPrintNoParens(path, options, print, args) {
       let separatorParts = [];
       const props = propsAndLoc.sort((a, b) => a.loc - b.loc).map(prop => {
         const result = concat(separatorParts.concat(group(prop.printed)));
-        separatorParts = [separator, dontBreak? " ": line];
+        separatorParts = [separator, line];
         if (util.isNextLineEmpty(options.originalText, prop.node)) {
           separatorParts.push(hardline);
         }
@@ -1071,12 +1072,12 @@ function genericPrintNoParens(path, options, print, args) {
           ])
         );
       } else if (dontBreak) {
-        return concat([
+        return removeLines(concat([
           leftBrace,
           concat(props),
           rightBrace,
           path.call(print, "typeAnnotation")
-        ]);
+        ]));
       } else {
         content = concat([
           leftBrace,
@@ -1922,7 +1923,7 @@ function genericPrintNoParens(path, options, print, args) {
 
       parts.push("`");
 
-      return concat(parts);
+      return removeLines(concat(parts));
     }
     // These types are unprintable because they serve as abstract
     // supertypes for other (printable) types.
@@ -2920,6 +2921,7 @@ function shouldGroupLastArg(args) {
 }
 
 function shouldGroupFirstArg(args) {
+  if (args.length === 1 && args[0].type === "ArrowFunctionExpression") return true;
   if (args.length !== 2) {
     return false;
   }
@@ -2972,6 +2974,8 @@ function printArgumentsList(path, options, print) {
       }
       i++;
     }, "arguments");
+
+    if (args.length === 1) return concat(["(", join(concat([", "]), printedExpanded), ")"]);
 
     return concat([
       printed.some(willBreak) ? breakParent : "",
@@ -3050,7 +3054,7 @@ function printFunctionParams(path, print, options, expandArg, printTypeParams) {
 
   let printed = [];
   if (fun[paramsField]) {
-    printed = path.map(print, paramsField).map(insideConnectCall? x => x: removeLines);
+    printed = path.map(print, paramsField);
   }
 
   if (fun.defaults) {
@@ -3082,31 +3086,18 @@ function printFunctionParams(path, print, options, expandArg, printTypeParams) {
   const canHaveTrailingComma =
     !(lastParam && lastParam.type === "RestElement") && !fun.rest;
 
-  /*if (insideConnectCall) return concat([
-    "(",
-    indent(
-      options.tabWidth,
-      concat([
-        hardline,
-        join(concat([",", hardline]), printed),
-      ])
-    ),
-    ifBreak(
-      canHaveTrailingComma && shouldPrintComma(options, "all") ? "," : ""
-    ),
-    hardline,
-  */
-
-  return concat([
-    typeParams,
-    "(",
-    indent(concat([softline, join(concat([",", line]), printed)])),
-    ifBreak(
-      canHaveTrailingComma && shouldPrintComma(options, "all") ? "," : ""
-    ),
-    softline,
-    ")"
-  ]);
+  return insideConnectCall?
+    concat([
+      typeParams,
+      "(",
+      indent(concat([hardline, join(concat([",", hardline]), printed)])),
+      ifBreak(
+        canHaveTrailingComma && shouldPrintComma(options, "all") ? "," : ""
+      ),
+      hardline,
+      ")"
+    ]):
+    concat([typeParams, "(", join(", ", printed), ")"]);
 }
 
 function canPrintParamsWithoutParens(node) {
@@ -3640,7 +3631,7 @@ function printMemberChain(path, options, print) {
           groups[0][0].node.name.match(/(^[A-Z])|^[_$]+$/) ||
           groups[0][0].node.name === "api" ||
           groups[0][0].node.name === "response" ||
-          groups[0][0].node.name === "navigator"
+          groups[0][0].node.name === "navigation"
         )));
 
   function printGroup(printedGroup) {
@@ -3667,33 +3658,6 @@ function printMemberChain(path, options, print) {
     flatGroups.slice(1, -1).some(node => hasLeadingComment(node.node)) ||
     flatGroups.slice(0, -1).some(node => hasTrailingComment(node.node)) ||
     (groups[cutoff] && hasLeadingComment(groups[cutoff][0].node));
-  const group1 = groups[shouldMerge? 2: 1];
-  const group1Name =
-    group1 &&
-    group1[0] &&
-    group1[0].node &&
-    group1[0].node.property &&
-    group1[0].node.property.name;
-  const isThenCall =
-    group1Name === "then" ||
-    group1Name === "tee" ||
-    group1Name === "catch" ||
-    group1Name === "catchStatus" ||
-    group1Name === "catch401" ||
-    group1Name === "catch404" ||
-    group1Name === "finally";
-
-  // If we only have a single `.`, we shouldn't do anything fancy and just
-  // render everything concatenated together.
-  if (
-    groups.length <= cutoff &&
-    !hasComment &&
-    !isThenCall &&
-    // (a || b).map() should be break before .map() instead of ||
-    groups[0][0].node.type !== "LogicalExpression"
-  ) {
-    return group(oneLine);
-  }
 
   const expanded = concat([
     printGroup(groups[0]),
@@ -3705,6 +3669,8 @@ function printMemberChain(path, options, print) {
   if (hasComment) {
     return group(expanded);
   }
+
+  if (groups.length > 2 && path.getParentNode().type !== "CallExpression") return group(expanded);
 
   // If any group but the last one has a hard line, we want to force expand
   // it. If the last group is a function it's okay to inline if it fits.
@@ -4127,6 +4093,13 @@ function shouldInlineLogicalExpression(node, path) {
     return true;
   }
 
+  if (
+    (path && path.getParentNode() && path.getParentNode().type !== "LogicalExpression") &&
+    node.left.type !== "LogicalExpression"
+  ) {
+    return true;
+  }
+
   return false;
 }
 
@@ -4198,6 +4171,10 @@ function printBinaryishExpressions(
       node.right.type !== node.type;
 
     parts.push(" ", shouldGroup ? group(right) : right);
+
+    if (shouldGroup) {
+      parts = removeLines(parts);
+    }
 
     // The root comments are already printed, but we need to manually print
     // the other ones since we don't call the normal print on BinaryExpression,
