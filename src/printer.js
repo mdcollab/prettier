@@ -1746,13 +1746,17 @@ function genericPrintNoParens(path, options, print, args) {
       }
 
       const attrs = path.map(attr => concat([hardline, print(attr)]), "attributes");
+      const hasSpread = path.getNode()
+        .attributes
+        .filter(({type}) => type === "JSXSpreadAttribute")
+        .length > 0;
 
       return group(
         concat([
           "<",
           path.call(print, "name"),
           concat([
-            indent(concat(sortJSXAttrs(attrs))),
+            indent(concat(hasSpread? attrs: sortJSXAttrs(attrs))),
             n.selfClosing ? line : options.jsxBracketSameLine ? ">" : softline
           ]),
           n.selfClosing ? "/>" : options.jsxBracketSameLine ? "" : ">"
