@@ -74,6 +74,13 @@ const getJSXAttrSortNumber = (doc, i) =>
     getPropSortNumber(doc.parts[1].parts[0].parts[0].parts[0], i):
     i + 100;
 
+const sortJSXAttrs = attrs =>
+  attrs
+    .slice()
+    .map((doc, i) => [doc, i])
+    .sort(([doc1, i1], [doc2, i2]) => getJSXAttrSortNumber(doc1, i1) - getJSXAttrSortNumber(doc2, i2))
+    .map(([doc, i]) => doc);
+
 const getObjectPropSortNumber = (objectProp, i) =>
   access(() => objectProp.key.name.search)?
     getPropSortNumber(objectProp.key.name, i):
@@ -1743,15 +1750,7 @@ function genericPrintNoParens(path, options, print, args) {
           "<",
           path.call(print, "name"),
           concat([
-            indent(
-              concat(
-                path.map(attr => concat([hardline, print(attr)]), "attributes")
-                  .slice()
-                  .map((doc, i) => [doc, i])
-                  .sort(([doc1, i1], [doc2, i2]) => getJSXAttrSortNumber(doc1, i1) - getJSXAttrSortNumber(doc2, i2))
-                  .map(([doc, i]) => doc)
-              )
-            ),
+            indent(concat(sortJSXAttrs(path.map(attr => concat([hardline, print(attr)]), "attributes")))),
             n.selfClosing ? line : options.jsxBracketSameLine ? ">" : softline
           ]),
           n.selfClosing ? "/>" : options.jsxBracketSameLine ? "" : ">"
