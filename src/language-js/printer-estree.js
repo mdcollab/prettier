@@ -3561,6 +3561,7 @@ const getImportSortNumber = (imp, i) => {
   if (isExternalImport(imp))                    return i + 100;
   if (name.search(/\.\.\/config$/)      !== -1) return i + 200;
   if (name.search(/\.\.\/store\//)      !== -1) return i + 300;
+  if (name.search(/\.\.\/types\//)      !== -1) return i + 350;
   if (name.search(/\.\.\/constants\//)  !== -1) return i + 400;
   if (name.search(/\.\.\/lib\//)        !== -1) return i + 500;
   if (name.search(/\.\.\/npm\//)        !== -1) return i + 600;
