@@ -3937,6 +3937,8 @@ function isSimpleTemplateLiteral(node) {
       return false;
     }
 
+    return true;
+
     // Allow `x` and `this`
     if (expr.type === "Identifier" || expr.type === "ThisExpression") {
       return true;
