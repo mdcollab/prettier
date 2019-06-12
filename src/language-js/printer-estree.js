@@ -3650,8 +3650,21 @@ function printStatementSequence(path, options, print) {
       }
     }
 
-    if (isNextLineEmpty(text, stmt, options) && !isLastStatement(stmtPath)) {
+    if (isNextLineEmpty(text, stmt, options) && !isLastStatement(stmtPath) && !isImport(stmt)) {
       parts.push(hardline);
+    }
+
+    if (
+      isImport(stmt) &&
+      lastExternalImport &&
+      stmt.range[0] === lastExternalImport.range[0] &&
+      stmt.range[0] !== lastImport.range[0]
+    ) {
+      parts.push(hardline);
+    }
+
+    if (isImport(stmt) && stmt.range[0] === lastImport.range[0]) {
+      parts.push(hardline, hardline);
     }
 
     printed.push(concat(parts));
