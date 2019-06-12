@@ -4314,8 +4314,9 @@ function printFunctionParams(path, print, options, expandArg, printTypeParams) {
     return concat([typeParams, "(", concat(printed), ")"]);
   }
 
+  // don't break if there's only one argument
   // don't break in specs, eg; `it("should maintain parens around done even when long", (done) => {})`
-  if (isParametersInTestCall) {
+  if (printed.length === 1 || isParametersInTestCall) {
     return concat([typeParams, "(", concat(printed), ")"]);
   }
 
