@@ -5138,12 +5138,12 @@ function printMemberChain(path, options, print) {
 
   // We don't want to print in one line if there's:
   //  * A comment.
-  //  * 3 or more chained calls.
+  //  * 2 or more chained calls.
   //  * Any group but the last one has a hard line.
   // If the last group is a function it's okay to inline if it fits.
   if (
     hasComment ||
-    callExpressions.length >= 3 ||
+    callExpressions.length >= 2 ||
     printedGroups.slice(0, -1).some(willBreak) ||
     /**
      *     scopes.filter(scope => scope.value !== '').map((scope, i) => {
