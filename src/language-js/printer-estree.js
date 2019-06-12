@@ -335,11 +335,11 @@ function printTernaryOperator(path, options, print, operatorOptions) {
       (node.type === "Literal" && node.value === null);
 
     parts.push(
-      " ? ",
+      "? ",
       isNull(consequentNode)
         ? path.call(print, operatorOptions.consequentNodePropertyName)
         : wrap(path.call(print, operatorOptions.consequentNodePropertyName)),
-      " : ",
+      ": ",
       alternateNode.type === operatorOptions.conditionalNodeType ||
         isNull(alternateNode)
         ? path.call(print, operatorOptions.alternateNodePropertyName)
@@ -348,8 +348,8 @@ function printTernaryOperator(path, options, print, operatorOptions) {
   } else {
     // normal mode
     const part = concat([
+      "?",
       line,
-      "? ",
       consequentNode.type === operatorOptions.conditionalNodeType
         ? ifBreak("", "(")
         : "",
@@ -357,8 +357,8 @@ function printTernaryOperator(path, options, print, operatorOptions) {
       consequentNode.type === operatorOptions.conditionalNodeType
         ? ifBreak("", ")")
         : "",
+      ":",
       line,
-      ": ",
       alternateNode.type === operatorOptions.conditionalNodeType
         ? path.call(print, operatorOptions.alternateNodePropertyName)
         : align(2, path.call(print, operatorOptions.alternateNodePropertyName))
