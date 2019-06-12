@@ -3544,11 +3544,63 @@ function hasNgSideEffect(path) {
   });
 }
 
+const isImport = statement => statement.type === "ImportDeclaration";
+const isExternalImport = statement => statement.source.value.search(/^\./) === -1;
+
+const imports1 = [
+  "react",
+  "react-native",
+  "react-redux",
+];
+
+const getImportSortNumber = (imp, i) => {
+  const name = imp.source.value;
+  const index = imports1.indexOf(name);
+
+  if (index !== -1) return index;
+  if (isExternalImport(imp))                    return i + 100;
+  if (name.search(/\.\.\/config$/)      !== -1) return i + 200;
+  if (name.search(/\.\.\/store\//)      !== -1) return i + 300;
+  if (name.search(/\.\.\/constants\//)  !== -1) return i + 400;
+  if (name.search(/\.\.\/lib\//)        !== -1) return i + 500;
+  if (name.search(/\.\.\/npm\//)        !== -1) return i + 600;
+  if (name.search(/\.\.\/utils\//)      !== -1) return i + 700;
+  if (name.search(/\.\.\/actions\//)    !== -1) return i + 800;
+  if (name.search(/\.\.\/components\//) !== -1) return i + 900;
+  if (name.search(/^\.\//)              !== -1) return i + 1000;
+  if (name.search(/\.\.\/styles\//)     !== -1) return i + 1100;
+                                                return i + 1200;
+};
+
+const sortImports = statements => {
+  const imports = [];
+
+  for (let i = 0; i < statements.length; i++) {
+    if (!isImport(statements[i])) break;
+    imports.push(statements[i]);
+  }
+
+  return imports
+    .map((imp, i) => [imp, i])
+    .sort(([imp1, i1], [imp2, i2]) => getImportSortNumber(imp1, i1) - getImportSortNumber(imp2, i2))
+    .map(([imp, i]) => imp);
+};
+
 function printStatementSequence(path, options, print) {
   const printed = [];
 
   const bodyNode = path.getNode();
   const isClass = bodyNode.type === "ClassBody";
+  const statements = path.stack[path.stack.length - 1];
+  const imports = sortImports(statements);
+
+  let i = 0;
+  while (imports[i] && isExternalImport(imports[i])) i++;
+
+  const lastExternalImport = imports[i - 1];
+  const lastImport = imports[imports.length - 1];
+
+  path.stack[path.stack.length - 1] = imports.concat(statements.slice(imports.length));
 
   path.map((stmtPath, i) => {
     const stmt = stmtPath.getValue();
