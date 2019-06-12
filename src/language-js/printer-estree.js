@@ -2169,13 +2169,10 @@ function printPathNoParens(path, options, print, args) {
         ]);
       }
 
-      // don't break up opening elements with a single long text attribute
+      // don't break up opening elements with a single attribute
       if (
         n.attributes &&
         n.attributes.length === 1 &&
-        n.attributes[0].value &&
-        isStringLiteral(n.attributes[0].value) &&
-        !n.attributes[0].value.value.includes("\n") &&
         // We should break for the following cases:
         // <div
         //   // comment
