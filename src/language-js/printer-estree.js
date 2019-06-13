@@ -826,6 +826,10 @@ function printPathNoParens(path, options, print, args) {
 
       const body = path.call(bodyPath => print(bodyPath, args), "body");
       const parent = path.getParentNode();
+      const isComponentDeclaration = isJSXNode(n.body) && (
+        parent.type === "VariableDeclarator" ||
+        (parent.type === "CallExpression" && parent.callee.property && parent.callee.property.name === "memo")
+      );
 
       // We want to always keep these types of nodes on the same line
       // as the arrow.
@@ -834,11 +838,11 @@ function printPathNoParens(path, options, print, args) {
         (n.body.type === "ArrayExpression" ||
           n.body.type === "ObjectExpression" ||
           n.body.type === "BlockStatement" ||
-          (isJSXNode(n.body) && parent.type !== "VariableDeclarator") ||
+          (isJSXNode(n.body) && !isComponentDeclaration) ||
+          (!isJSXNode(n.body) && parent.type === "CallExpression") ||
           isTemplateOnItsOwnLine(n.body, options.originalText, options) ||
           n.body.type === "ArrowFunctionExpression" ||
           (n.body.type === "CallExpression" && parent.type === "JSXExpressionContainer") ||
-          parent.type === "CallExpression" ||
           n.body.type === "DoExpression")
       ) {
         return group(concat([concat(parts), " ", body]));
