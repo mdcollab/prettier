@@ -444,7 +444,7 @@ function printTrailingComment(commentPath, print, options) {
   }
 
   return concat([
-    lineSuffix(concat(["  ", contents])),
+    lineSuffix(concat([" ", contents])),
     !isBlock ? breakParent : ""
   ]);
 }
