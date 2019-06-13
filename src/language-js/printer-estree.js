@@ -5199,6 +5199,7 @@ function printMemberChain(path, options, print) {
   ]);
 
   const callExpressions = printedNodes
+    .slice(1)
     .map(({ node }) => node)
     .filter(isCallOrOptionalCallExpression);
 
