@@ -3555,6 +3555,7 @@ const isExternalImport = statement => statement.source.value.search(/^\./) === -
 const imports1 = [
   "react",
   "react-native",
+  "native-base",
   "react-redux",
 ];
 
