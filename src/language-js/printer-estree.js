@@ -2224,12 +2224,12 @@ function printPathNoParens(path, options, print, args) {
       // string literal with newlines
       const shouldBreak =
         n.attributes &&
-        n.attributes.some(
+        (n.attributes.length > 1 || n.attributes.some(
           attr =>
             attr.value &&
             isStringLiteral(attr.value) &&
             attr.value.value.includes("\n")
-        );
+        ));
 
       return group(
         concat([
