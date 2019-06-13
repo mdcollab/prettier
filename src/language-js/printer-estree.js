@@ -5831,6 +5831,10 @@ function isMemberish(node) {
 }
 
 function shouldInlineLogicalExpression(node) {
+  if (node.type === "BinaryExpression") {
+    return true;
+  }
+
   if (node.type !== "LogicalExpression") {
     return false;
   }
