@@ -307,7 +307,6 @@ function printTernaryOperator(path, options, print, operatorOptions) {
   const lastConditionalParent = previousParent;
 
   if (
-    false &&
     operatorOptions.shouldCheckJsx &&
     (isJSXNode(testNode) ||
       isJSXNode(consequentNode) ||
@@ -322,10 +321,7 @@ function printTernaryOperator(path, options, print, operatorOptions) {
     // curly braces in an if statement.
     const wrap = doc =>
       concat([
-        ifBreak("(", ""),
         indent(concat([softline, doc])),
-        softline,
-        ifBreak(")", "")
       ]);
 
     // The only things we don't wrap are:
@@ -336,11 +332,11 @@ function printTernaryOperator(path, options, print, operatorOptions) {
       (node.type === "Literal" && node.value === null);
 
     parts.push(
-      "? ",
+      "?",
       isNull(consequentNode)
         ? path.call(print, operatorOptions.consequentNodePropertyName)
         : wrap(path.call(print, operatorOptions.consequentNodePropertyName)),
-      ": ",
+      ":",
       alternateNode.type === operatorOptions.conditionalNodeType ||
         isNull(alternateNode)
         ? path.call(print, operatorOptions.alternateNodePropertyName)
