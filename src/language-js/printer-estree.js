@@ -6618,7 +6618,7 @@ function printComment(commentPath, options) {
       ) {
         return "#!" + comment.value.trimRight();
       }
-      return " //" + comment.value.trimRight();
+      return (comment.trailing? " //": "//") + comment.value.trimRight();
     default:
       throw new Error("Not a comment: " + JSON.stringify(comment));
   }
