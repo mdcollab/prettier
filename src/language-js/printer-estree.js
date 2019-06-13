@@ -6620,7 +6620,7 @@ function printComment(commentPath, options) {
       ) {
         return "#!" + comment.value.trimRight();
       }
-      return "//" + comment.value.trimRight();
+      return " //" + comment.value.trimRight();
     default:
       throw new Error("Not a comment: " + JSON.stringify(comment));
   }
