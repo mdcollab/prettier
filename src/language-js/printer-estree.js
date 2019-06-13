@@ -5181,12 +5181,6 @@ function printMemberChain(path, options, print) {
     flatGroups.slice(0, -1).some(node => hasTrailingComment(node.node)) ||
     (groups[cutoff] && hasLeadingComment(groups[cutoff][0].node));
 
-  // If we only have a single `.`, we shouldn't do anything fancy and just
-  // render everything concatenated together.
-  if (groups.length <= cutoff && !hasComment) {
-    return group(oneLine);
-  }
-
   // Find out the last node in the first group and check if it has an
   // empty line after
   const lastNodeBeforeIndent = getLast(
