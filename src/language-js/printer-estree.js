@@ -1172,7 +1172,7 @@ function printPathNoParens(path, options, print, args) {
         // e.g. `define(["some/lib", (lib) => {`
         (!isNew &&
           n.callee.type === "Identifier" &&
-          (n.callee.name === "require" || n.callee.name === "define")) ||
+          (n.callee.name === "require" || n.callee.name === "define" || n.callee.name === "dispatch")) ||
         // Template literals as single arguments
         (n.arguments.length === 1 &&
           isTemplateOnItsOwnLine(
