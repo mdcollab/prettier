@@ -307,6 +307,7 @@ function printTernaryOperator(path, options, print, operatorOptions) {
   const lastConditionalParent = previousParent;
 
   if (
+    false &&
     operatorOptions.shouldCheckJsx &&
     (isJSXNode(testNode) ||
       isJSXNode(consequentNode) ||
@@ -873,6 +874,7 @@ function printPathNoParens(path, options, print, args) {
       // a => a ? a : a
       // a <= a ? a : a
       const shouldAddParens =
+        false &&
         n.body.type === "ConditionalExpression" &&
         !startsWithNoLookaheadToken(n.body, /* forbidFunctionAndClass */ false);
 
