@@ -1745,7 +1745,7 @@ function printPathNoParens(path, options, print, args) {
         ])
       );
     case "IfStatement": {
-      const con = adjustClause(n.consequent, path.call(print, "consequent"));
+      const con = concat([" ", path.call(print, "consequent")]);
       const opening = group(
         concat([
           "if (",
