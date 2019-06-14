@@ -324,23 +324,11 @@ function printTernaryOperator(path, options, print, operatorOptions) {
         indent(concat([softline, doc])),
       ]);
 
-    // The only things we don't wrap are:
-    // * Nested conditional expressions in alternates
-    // * null
-    const isNull = node =>
-      node.type === "NullLiteral" ||
-      (node.type === "Literal" && node.value === null);
-
     parts.push(
       "?",
-      isNull(consequentNode)
-        ? path.call(print, operatorOptions.consequentNodePropertyName)
-        : wrap(path.call(print, operatorOptions.consequentNodePropertyName)),
+      wrap(path.call(print, operatorOptions.consequentNodePropertyName)),
       ":",
-      alternateNode.type === operatorOptions.conditionalNodeType ||
-        isNull(alternateNode)
-        ? path.call(print, operatorOptions.alternateNodePropertyName)
-        : wrap(path.call(print, operatorOptions.alternateNodePropertyName))
+      wrap(path.call(print, operatorOptions.alternateNodePropertyName))
     );
   } else {
     // normal mode
