@@ -316,13 +316,7 @@ function printTernaryOperator(path, options, print, operatorOptions) {
     jsxMode = true;
     forceNoIndent = true;
 
-    // Even though they don't need parens, we wrap (almost) everything in
-    // parens when using ?: within JSX, because the parens are analogous to
-    // curly braces in an if statement.
-    const wrap = doc =>
-      concat([
-        indent(concat([softline, doc])),
-      ]);
+    const wrap = doc => indent(concat([line, doc]));
 
     parts.push(
       "?",
